@@ -1,7 +1,7 @@
 import React from "react";
 import StarIcon from "@mui/icons-material/Star";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { limitString } from "/Users/nghiempt/Documents/fptu-kiotfpt-client-new/utils/helper";
+import { limitString } from "../utils/helper";
 import Link from "next/link";
 
 export default function CardProduct({ item, index, limit, isFavouriteProductCart = false }: { item: any, index: any, limit: any, isFavouriteProductCart?: any }) {

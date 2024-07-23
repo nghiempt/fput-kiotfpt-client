@@ -156,7 +156,9 @@ const Page = () => {
                                 </h1>
                                 <div className="grid grid-cols-5 gap-x-4">
                                     {products?.slice(0, 5)?.map((item: any, index: any) => {
-                                        return <CardProduct item={item} index={index} limit={100} />;
+                                        return <div key={index}>
+                                            <CardProduct item={item} index={index} limit={100} />
+                                        </div>;
                                     })}
                                 </div>
                             </div>

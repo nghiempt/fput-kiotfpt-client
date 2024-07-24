@@ -1,4 +1,38 @@
 import { API } from "./_api";
+import Cookie from "js-cookie";
+
+const getProfile = async () => {
+    try {
+        const response = await fetch(API.GET_PROFILE, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const updateProfile = async (payload: any) => {
+    try {
+        const response = await fetch(API.UPDATE_PROFILE, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
 
 const getAllNotifications = async () => {
     try {
@@ -6,7 +40,7 @@ const getAllNotifications = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
         });
         const data = await response.json();
@@ -22,7 +56,7 @@ const deleteNotify = async (id: string) => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
         });
         const data = await response.json();
@@ -38,7 +72,7 @@ const getAllOrders = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
         });
         const data = await response.json();
@@ -54,7 +88,7 @@ const getAllTransactions = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
         });
         const data = await response.json();
@@ -70,7 +104,7 @@ const getAllAddress = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
         });
         const data = await response.json();
@@ -86,7 +120,7 @@ const getAllFavourite = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
         });
         const data = await response.json();
@@ -96,11 +130,31 @@ const getAllFavourite = async () => {
     }
 };
 
+const createAddress = async (payload: any) => {
+    try {
+        const response = await fetch(API.CREATE_ADDRESS, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 export const ProfileService = {
+    getProfile,
+    updateProfile,
     getAllNotifications,
     deleteNotify,
     getAllOrders,
     getAllTransactions,
     getAllAddress,
-    getAllFavourite
+    getAllFavourite,
+    createAddress
 }

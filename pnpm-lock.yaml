@@ -62,6 +62,9 @@ dependencies:
   react-dom:
     specifier: ^18
     version: 18.3.1(react@18.3.1)
+  react-semantic-toasts:
+    specifier: ^0.6.6
+    version: 0.6.6(prop-types@15.8.1)(react@18.3.1)(semantic-ui-react@2.1.5)
   react-slick:
     specifier: ^0.30.2
     version: 0.30.2(react-dom@18.3.1)(react@18.3.1)
@@ -3253,6 +3256,18 @@ packages:
       react-dom: 18.3.1(react@18.3.1)
       react-fast-compare: 3.2.2
       warning: 4.0.3
+    dev: false
+
+  /react-semantic-toasts@0.6.6(prop-types@15.8.1)(react@18.3.1)(semantic-ui-react@2.1.5):
+    resolution: {integrity: sha512-sRSL3aikNSVxxhLai785UtSEaSZw3/pxQrPJVmLs83VpAkJyfBhy8RKxxBej0FGr+ah8qCRGHDJUPccNoraHKA==}
+    peerDependencies:
+      prop-types: ^15.7.2
+      react: 16.x.x || 17.x.x
+      semantic-ui-react: '*'
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.3.1
+      semantic-ui-react: 2.1.5(react-dom@18.3.1)(react@18.3.1)
     dev: false
 
   /react-slick@0.30.2(react-dom@18.3.1)(react@18.3.1):

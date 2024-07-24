@@ -1,4 +1,5 @@
 import { API } from "./_api";
+import Cookie from "js-cookie";
 
 const signIn = async (payload: any) => {
     try {
@@ -10,10 +11,19 @@ const signIn = async (payload: any) => {
             body: JSON.stringify(payload),
         });
         const data = await response.json();
-        return data;
+        if (data?.result) {
+            Cookie.set("auth", JSON.stringify(data?.data));
+            return data
+        } else {
+            return false;
+        }
     } catch (err) {
         return false;
     }
+};
+
+const signOut = () => {
+    Cookie.remove("auth");
 };
 
 const signUp = async (payload: any) => {
@@ -35,4 +45,5 @@ const signUp = async (payload: any) => {
 export const AuthService = {
     signIn,
     signUp,
+    signOut,
 }

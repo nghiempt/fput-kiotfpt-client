@@ -19,10 +19,13 @@ export const API = {
     // cart
     GET_CART: `${HOST}/cart`,
     // profile
+    GET_PROFILE: `${HOST}/profile`,
+    UPDATE_PROFILE: `${HOST}/profile/update`,
     GET_ALL_NOTIFY_BY_ACCOUNT_ID: `${HOST}/notify/get-all`,
     DELETE_NOTIFY_BY_ID: `${HOST}/notify/delete`,
     GET_ALL_ORDER_BY_ACCOUNT_ID: `${HOST}/order/get-all`,
     GET_ALLTRANSACTION_BY_ACCOUNT_ID: `${HOST}/transaction/get-all`,
     GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
     GET_ALL_FAVORITE_BY_ACCOUNT_ID: `${HOST}/favourite/get-all`,
+    CREATE_ADDRESS: `${HOST}/address/create`,
 };

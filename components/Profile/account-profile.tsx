@@ -1,12 +1,44 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LockIcon from '@mui/icons-material/Lock';
 import TextField from '@mui/material/TextField';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Alert from '@mui/material/Alert';
+import { ProfileService } from "../../service/profile";
 
 export default function AccountProfile() {
+
+  const [profile, setProfile] = React.useState({} as any);
+
+  const handleSave = async () => {
+    const payload = {
+      birthday: "2024-07-23",
+      email: profile?.email,
+      id: profile?.id,
+      name: profile?.name,
+      phone: profile?.phone,
+      thumbnail: "https://cdn-icons-png.flaticon.com/128/2111/2111463.png",
+    }
+    console.log(payload);
+
+    const res = await ProfileService.updateProfile(payload);
+    if (res?.result) {
+      // window.location.reload();
+    } else {
+      // window.location.reload();
+    }
+  };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const data = await ProfileService.getProfile();
+      if (data?.result) {
+        setProfile(data?.data);
+      }
+    };
+    fetchProfile();
+  }, []);
+
   return (
     <div className="w-full box-border pb-40">
       <div style={{
@@ -16,21 +48,6 @@ export default function AccountProfile() {
         zIndex: 10,
         width: '300px',
       }}>
-        <Alert variant="filled" severity="success" className='w-full' id="alertSuccess" style={{ display: 'none', alignItems: 'center' }}>
-          Update profile successfully!
-        </Alert>
-        <Alert variant="filled" severity="warning" className='w-full' id="alertAtleast" style={{ display: 'none', alignItems: 'center' }}>
-          Full name must be at least 6 characters!
-        </Alert>
-        <Alert variant="filled" severity="warning" className='w-full' id="alertTooLong" style={{ display: 'none', alignItems: 'center' }}>
-          Full name is too long, must shorter than 256 characters!
-        </Alert>
-        <Alert variant="filled" severity="warning" className='w-full' id="alertPhone" style={{ display: 'none', alignItems: 'center' }}>
-          Phone number must be ten characters!
-        </Alert>
-        <Alert variant="filled" severity="warning" className='w-full' id="alertEmail" style={{ display: 'none', alignItems: 'center' }}>
-          Email is invalid!
-        </Alert>
       </div>
       <h1 className="font-semibold text-[20px] py-4">Account Information</h1>
       <div className="w-full flex border rounded-lg shadow-md">
@@ -46,9 +63,10 @@ export default function AccountProfile() {
           <div className="w-full box-border flex font-medium items-center">
             <h1 className="w-1/5">Fullname</h1>
             <TextField
+              value={profile?.name}
               className="w-4/5"
-              label="Full name"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setProfile({ ...profile, name: event.target.value });
               }}
             />
           </div>
@@ -61,25 +79,27 @@ export default function AccountProfile() {
           <div className="w-full flex font-medium items-center">
             <h1 className="w-1/5">Email</h1>
             <TextField
+              value={profile?.email}
               className="w-4/5"
-              label="Email"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setProfile({ ...profile, email: event.target.value });
               }}
             />
           </div>
           <div className="w-full flex font-medium items-center">
             <h1 className="w-1/5">Phone</h1>
             <TextField
+              value={profile?.phone}
               className="w-4/5"
-              label="Phone number"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setProfile({ ...profile, phone: event.target.value });
               }}
             />
           </div>
           <div className="w-full flex font-medium items-center">
             <div className="w-1/5"></div>
             <div className="w-4/5">
-              <button className="bg-[rgb(var(--primary-rgb))] font-semibold py-2 px-16 rounded-md text-white">
+              <button onClick={handleSave} className="bg-[rgb(var(--primary-rgb))] font-semibold py-2 px-16 rounded-md text-white">
                 SAVE
               </button>
             </div>

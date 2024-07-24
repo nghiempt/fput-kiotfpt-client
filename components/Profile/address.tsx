@@ -2,10 +2,16 @@ import React, { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { ProfileService } from "../../service/profile";
+import ModalCreateAddress from "../Modal/modal.create-address";
 
 const Address = () => {
 
   const [addresses, setAddresses] = useState([] as any);
+  const [openModalCreate, setOpenModalCreate] = useState(false)
+
+  const handleOpenModalCreate = () => {
+    setOpenModalCreate(true);
+  }
 
   const handleGetAddress = async () => {
     const fetch = async () => {
@@ -27,9 +33,11 @@ const Address = () => {
 
   return (
     <div className="w-full box-border flex flex-col gap-4 pb-48">
+      <ModalCreateAddress open={openModalCreate} setOpen={setOpenModalCreate} initialData={{}} />
       <h1 className="font-semibold text-[20px] py-4">Address Management</h1>
       <div className='flex justify-center items-center mb-6'>
         <button
+          onClick={handleOpenModalCreate}
           className="w-1/6 flex gap-x-2 bg-[rgb(var(--quaternary-rgb))] rounded-md p-4 justify-center items-center"
         >
           <AddIcon style={{ color: '#fff' }} />

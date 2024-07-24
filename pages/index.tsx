@@ -1,32 +1,32 @@
 import Head from 'next/head';
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import CardProduct from "../components/Product";
 import { HomeService } from "../service/home";
 import { limitString } from '../utils/helper';
+import { SemanticToastContainer } from 'react-semantic-toasts';
+import ModalSignUp from '../components/Modal/modal.sign-up';
+import ModalSignIn from '../components/Modal/modal.sign-in';
+import { AuthService } from '../service/auth';
+import Cookie from "js-cookie";
 
 const Page = () => {
 
-    const [isSignIn, setIsSignIn] = React.useState(false);
-    const [isSignUp, setIsSignUp] = React.useState(false);
+    const [session, setSession] = useState();
 
-    const handleOpenSignIn = () => {
-        setIsSignIn(true);
+    const [openModalSignUp, setOpenModalSignUp] = useState(false)
+    const [openModalSignIn, setOpenModalSignIn] = useState(false)
+
+    const handleOpenModalSignUp = () => {
+        setOpenModalSignUp(true);
     }
 
-    const handleCloseSignIn = () => {
-        setIsSignIn(false);
-    }
-
-    const handleOpenSignUp = () => {
-        setIsSignUp(true);
-    }
-
-    const handleCloseSignUp = () => {
-        setIsSignUp(false);
+    const handleOpenModalSignIn = () => {
+        setOpenModalSignIn(true);
     }
 
     const signOut = () => {
+        AuthService.signOut();
         window.location.reload();
     }
 
@@ -36,6 +36,7 @@ const Page = () => {
     const [shops, setShops] = React.useState([] as any);
 
     React.useEffect(() => {
+        setSession(JSON.parse(Cookie.get("auth") || "{}")?.account_id);
         const fetch = async () => {
             try {
                 const [
@@ -75,7 +76,12 @@ const Page = () => {
                 <meta name="description" content="" />
                 <meta name="keywords" content="" />
             </Head>
+            <ModalSignUp open={openModalSignUp} setOpen={setOpenModalSignUp} initialData={{}} />
+            <ModalSignIn open={openModalSignIn} setOpen={setOpenModalSignIn} initialData={{}} />
             <div className="w-full flex flex-col justify-center items-center">
+                <div className='w-2/3 flex flex-col justify-center items-center'>
+                    <SemanticToastContainer className="w-full" />
+                </div>
                 <div className="w-full flex flex-col justify-center items-center">
                     <div className="w-2/3 h-[380px] flex gap-x-4 border border-[#E0E0E0] rounded-[6px] p-5 box-border">
                         <div className="font-regular w-1/5 text-[16px]">
@@ -106,31 +112,60 @@ const Page = () => {
                             </div>
                         </div>
                         <div className="w-1/5 grid grid-rows-2 grid-flow-col gap-4">
-                            <div className="bg-blue-100 rounded-[6px] box-border px-4 pt-4">
-                                <div className="grid grid-rows-2 grid-flow-col">
-                                    <div>
-                                        <div className='text-[18px] font-black'>YOU ARE A GUEST</div>
+                            {
+                                session === undefined
+                                    ?
+                                    <div className="bg-blue-100 rounded-[6px] box-border px-4 pt-4">
+                                        <div className="grid grid-rows-2 grid-flow-col">
+                                            <div>
+                                                <div className='text-[18px] font-black'>YOU ARE A GUEST</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <button
+                                                    onClick={handleOpenModalSignUp}
+                                                    className="w-full py-2 bg-[rgb(var(--quaternary-rgb))] text-white rounded-[6px] mt-2"
+                                                >
+                                                    Join now
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <button
+                                                    onClick={handleOpenModalSignIn}
+                                                    className="w-full py-2 bg-white text-[rgb(var(--quaternary-rgb))] rounded-[6px] mt-2"
+                                                >
+                                                    Sign In
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <button
-                                            onClick={handleOpenSignUp}
-                                            className="w-full py-2 bg-[rgb(var(--quaternary-rgb))] text-white rounded-[6px] mt-2"
-                                        >
-                                            Join now
-                                        </button>
+                                    :
+                                    <div className="bg-blue-100 rounded-[6px] box-border px-4 pt-4">
+                                        <div className="grid grid-rows-2 grid-flow-col">
+                                            <div>
+                                                <div className='text-[18px] font-black'>START TO BUY</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <Link href="/profile">
+                                                <button
+                                                    className="w-full py-2 bg-[rgb(var(--quaternary-rgb))] text-white rounded-[6px] mt-2"
+                                                >
+                                                    Update your profile
+                                                </button>
+                                            </Link>
+                                            <div>
+                                                <button
+                                                    onClick={signOut}
+                                                    className="w-full py-2 bg-white text-[rgb(var(--quaternary-rgb))] rounded-[6px] mt-2"
+                                                >
+                                                    Sign Out
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <button
-                                            onClick={handleOpenSignIn}
-                                            className="w-full py-2 bg-white text-[rgb(var(--quaternary-rgb))] rounded-[6px] mt-2"
-                                        >
-                                            Sign In
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            }
                             <div>
                                 <img
                                     src="https://img.freepik.com/premium-vector/best-seller-banner-thumbs-up_97458-366.jpg"

@@ -5,12 +5,56 @@ import { ProfileService } from "../../service/profile";
 export default function Order() {
 
   const [orders, setOrders] = useState([] as any);
+  const [filterOrders, setFilterOrders] = useState([] as any);
+  const [tab, setTab] = useState(0);
+
+  const handleChangeTab = (data: any, index: number) => {
+    setTab(index);
+    let tmp: any = []
+    switch (index) {
+      case 0:
+        data?.forEach((order: any) => {
+          if (order?.status?.value === 'pending') {
+            tmp.push(order);
+          }
+        });
+        setFilterOrders(tmp);
+        break;
+      case 1:
+        data?.forEach((order: any) => {
+          if (order?.status?.value === 'delivering') {
+            tmp.push(order);
+          }
+        });
+        setFilterOrders(tmp);
+        break;
+      case 2:
+        data?.forEach((order: any) => {
+          if (order?.status?.value === 'completed') {
+            tmp.push(order);
+          }
+        });
+        setFilterOrders(tmp);
+        break;
+      case 3:
+        data?.forEach((order: any) => {
+          if (order?.status?.value === 'rejected') {
+            tmp.push(order);
+          }
+        });
+        setFilterOrders(tmp);
+        break;
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     const fetch = async () => {
       const prof = await ProfileService.getAllOrders();
       if (prof?.result) {
         setOrders(prof?.data);
+        handleChangeTab(prof?.data, 0);
       } else {
         return
       }
@@ -24,22 +68,22 @@ export default function Order() {
     <div className="w-full box-border flex flex-col gap-5 pb-40">
       <h1 className="font-semibold text-[20px] pt-4">Order Management</h1>
       <div className="w-full grid grid-cols-4 gap-4">
-        <Button color='facebook'>
+        <Button color={`${tab === 0 ? 'facebook' : 'grey'}`} onClick={() => handleChangeTab(orders, 0)}>
           <Icon name='sun' /> Pending
         </Button>
-        <Button color='grey'>
+        <Button color={`${tab === 1 ? 'facebook' : 'grey'}`} onClick={() => handleChangeTab(orders, 1)}>
           <Icon name='rain' /> Delivering
         </Button>
-        <Button color='grey'>
+        <Button color={`${tab === 2 ? 'facebook' : 'grey'}`} onClick={() => handleChangeTab(orders, 2)}>
           <Icon name='check' /> Completed
         </Button>
-        <Button color='grey'>
+        <Button color={`${tab === 3 ? 'facebook' : 'grey'}`} onClick={() => handleChangeTab(orders, 3)}>
           <Icon name='close' /> Rejected
         </Button>
       </div>
       <div className="w-full flex flex-col gap-10 mt-6">
         {
-          orders?.map((order: any, index: number) => {
+          filterOrders?.map((order: any, index: number) => {
             return (
               <div key={index} className="flex flex-col">
                 <div className="flex justify-between items-center mb-4">

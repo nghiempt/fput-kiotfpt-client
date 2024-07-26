@@ -13,13 +13,14 @@ import { toast } from 'react-semantic-toasts'
 import { ProfileService } from '../../service/profile'
 import { AddressService } from '../../service/address'
 
-interface ModalCreateAddressProps {
+interface ModalUpdateAddressProps {
     open: boolean
     setOpen: (open: boolean) => void
     initialData: any
+    selectedAddress: any
 }
 
-const ModalCreateAddress: React.FC<ModalCreateAddressProps> = ({ open, setOpen, initialData }) => {
+const ModalUpdateAddress: React.FC<ModalUpdateAddressProps> = ({ open, setOpen, initialData, selectedAddress }) => {
 
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
@@ -139,7 +140,7 @@ const ModalCreateAddress: React.FC<ModalCreateAddressProps> = ({ open, setOpen, 
             onOpen={() => setOpen(true)}
             open={open}
         >
-            <ModalHeader>Create Address</ModalHeader>
+            <ModalHeader>Update Address</ModalHeader>
             {
                 checkMessage() && (
                     <div className="mt-1 p-4 bg-red-100 text-red-600 dark:bg-red-500 dark:text-red-100">
@@ -151,7 +152,12 @@ const ModalCreateAddress: React.FC<ModalCreateAddressProps> = ({ open, setOpen, 
                 <Form className='!w-full'>
                     <FormField>
                         <label>Address Detail</label>
-                        <input id='address' placeholder='Address Detail' value={addressDetail} onChange={(e) => { setAddressDetail(e.target.value); setMessage('done') }} />
+                        <input
+                            id='address'
+                            placeholder='Address Detail'
+                            value={selectedAddress?.address_value}
+                            onChange={(e) => { setAddressDetail(e.target.value); setMessage('done') }}
+                        />
                     </FormField>
                     <FormField>
                         <label>Province</label>
@@ -185,4 +191,4 @@ const ModalCreateAddress: React.FC<ModalCreateAddressProps> = ({ open, setOpen, 
     )
 }
 
-export default ModalCreateAddress
+export default ModalUpdateAddress

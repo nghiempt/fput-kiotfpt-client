@@ -63,7 +63,7 @@ const Page = () => {
                     setShops(shs?.data);
                 }
             } catch (error) {
-                console.error("Error fetching data:", error);
+                return
             }
         };
         fetch();

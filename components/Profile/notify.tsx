@@ -7,6 +7,22 @@ export default function Notify() {
 
   const [notifies, setNotifies] = useState([] as any);
 
+  function getTime(dateTimeString: string): string {
+    const date = new Date(dateTimeString);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
+  function getDate(dateTimeString: string): string {
+    const date = new Date(dateTimeString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   const handleGetNotify = async () => {
     const fetch = async () => {
       const prof = await ProfileService.getAllNotifications();
@@ -23,6 +39,7 @@ export default function Notify() {
     const prof = await ProfileService.deleteNotify(ID);
     if (prof?.result) {
       handleGetNotify();
+      window.location.reload();
     } else {
       return
     }
@@ -54,7 +71,7 @@ export default function Notify() {
                     <div className="flex flex-col gap-1">
                       <h1 className="font-semibold text-[16px]">{item?.title}</h1>
                       <h1 className="text-[12px]">{item?.description}</h1>
-                      <h1 className="text-[12px]">11/12/2024 &nbsp; - &nbsp; 12:35:05</h1>
+                      <h1 className="text-[12px]">{getDate(item?.time)} &nbsp; - &nbsp; {getTime(item?.time)}</h1>
                     </div>
                   </div>
                   <div onClick={() => handleDeleteNotify(item?.id)} className="border rounded-full mr-2 p-2 bg-[rgb(var(--primary-rgb))] cursor-pointer">

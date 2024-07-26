@@ -2,9 +2,7 @@ import React from 'react'
 import {
     ModalHeader,
     ModalContent,
-    ModalActions,
     Modal,
-    Button,
 } from 'semantic-ui-react'
 
 interface ModalChangeAddressProps {

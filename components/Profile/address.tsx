@@ -3,14 +3,22 @@ import AddIcon from '@mui/icons-material/Add';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { ProfileService } from "../../service/profile";
 import ModalCreateAddress from "../Modal/modal.create-address";
+import ModalUpdateAddress from "../Modal/modal.update-address";
 
 const Address = () => {
 
   const [addresses, setAddresses] = useState([] as any);
+  const [selectedAddress, setSelectedAddress] = useState({} as any);
   const [openModalCreate, setOpenModalCreate] = useState(false)
+  const [openModalUpdate, setOpenModalUpdate] = useState(false)
 
   const handleOpenModalCreate = () => {
     setOpenModalCreate(true);
+  }
+
+  const handleOpenModalUpdate = (item: any) => {
+    setSelectedAddress(item);
+    setOpenModalUpdate(true);
   }
 
   const handleGetAddress = async () => {
@@ -34,6 +42,7 @@ const Address = () => {
   return (
     <div className="w-full box-border flex flex-col gap-4 pb-48">
       <ModalCreateAddress open={openModalCreate} setOpen={setOpenModalCreate} initialData={{}} />
+      <ModalUpdateAddress open={openModalUpdate} setOpen={setOpenModalUpdate} initialData={{}} selectedAddress={selectedAddress} />
       <h1 className="font-semibold text-[20px] py-4">Address Management</h1>
       <div className='flex justify-center items-center mb-6'>
         <button
@@ -56,7 +65,7 @@ const Address = () => {
                 </div>}
 
               </div>
-              <button className="font-medium text-[rgb(var(--quaternary-rgb))] box-border border border-[rgb(var(--quaternary-rgb))] py-1 px-8 rounded-md">
+              <button onClick={() => handleOpenModalUpdate(item)} className="font-medium text-[rgb(var(--quaternary-rgb))] box-border border border-[rgb(var(--quaternary-rgb))] py-1 px-8 rounded-md">
                 Edit
               </button>
             </div>

@@ -6,12 +6,14 @@ import { ProfileService } from "../../service/profile";
 export default function Transaction() {
 
   const [transactions, setTransactions] = useState([] as any);
+  const [currentItem, setCurrentItem] = useState({ items: [{ product: { thumbnail: [{ link: '' }] } }] } as any);
 
   const handleGetNotify = async () => {
     const fetch = async () => {
       const prof = await ProfileService.getAllTransactions();
       if (prof?.result) {
         setTransactions(prof?.data);
+        setCurrentItem(JSON.parse(prof?.data[0]?.desc || '{}'));
       } else {
         return
       }
@@ -61,7 +63,7 @@ export default function Transaction() {
                               </div>
                               <div className="ml-3">
                                 <p className="text-gray-900 whitespace-no-wrap">
-                                  Payment Order #KIOT-{item?.id}
+                                  Payment #KT-TRAN-{item?.id}
                                 </p>
                                 <p className="text-gray-600 whitespace-no-wrap flex justify-start items-center">
                                   <StoreIcon style={{ width: '16px', height: '16px', marginRight: '4px' }} />{item?.shop?.name}
@@ -70,7 +72,7 @@ export default function Transaction() {
                             </div>
                           </td>
                           <td className={`px-5 py-5 ${index === 0 ? 'bg-gray-100' : 'bg-white'} border-b border-gray-200 text-sm`}>
-                            <p className="text-gray-900 whitespace-no-wrap">{item?.total}</p>
+                            <p className="text-gray-900 whitespace-no-wrap">${item?.total}</p>
                           </td>
                           <td className={`px-5 py-5 ${index === 0 ? 'bg-gray-100' : 'bg-white'} border-b border-gray-200 text-sm`}>
                             <p className="text-gray-900 whitespace-no-wrap">{item?.timeComplete?.slice(0, 10)}</p>
@@ -102,7 +104,7 @@ export default function Transaction() {
                 <div className="flex items-center">
                   <img src="https://cdn-icons-png.flaticon.com/128/3186/3186949.png" alt="transaction icon" className="w-10 h-10" />
                   <div className="ml-3">
-                    <h2 className="text-lg font-semibold">Order #KIOT-{transactions[0]?.id}</h2>
+                    <h2 className="text-lg font-semibold">Order #KT-TRAN-{transactions[0]?.id}</h2>
                     <span className="text-sm text-gray-500">{transactions[0]?.shop?.name}</span>
                   </div>
                 </div>
@@ -112,58 +114,47 @@ export default function Transaction() {
                 </span>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-2">Purchase Details</h3>
+                <p className="text-lg font-medium mb-2">Purchase Details</p>
                 <div className="mb-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-gray-500">Invoice Number</p>
-                      <p className="text-sm text-blue-500">JSRY302-1843-01</p>
+                      <p className="text-sm text-gray-500">Shop</p>
+                      <div className="flex items-center gap-2">
+                        <img src={transactions[0]?.shop?.thumbnail} alt="transaction icon" className="w-6 h-6 inline-block" />
+                        <p className="text-sm text-blue-500">{transactions[0]?.shop?.name}</p>
+                      </div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Date Purchased</p>
-                      <p className="text-sm text-gray-900">18 May 2024, 16:01 PM</p>
+                      <p className="text-sm text-gray-900">Email: {transactions[0]?.shop?.email}</p>
+                      <p className="text-sm text-gray-900">Phone: {transactions[0]?.shop?.phone}</p>
                     </div>
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Timeline</h3>
                 <div className="mb-4">
                   <ul className="timeline">
                     <li className="mb-4">
-                      <p className="text-sm text-gray-500">18 May 2024</p>
-                      <p className="text-sm text-gray-900 font-semibold">Transaction Finished</p>
-                      <p className="text-sm text-gray-500">Balance is received</p>
+                      <p className="text-lg text-gray-900 font-medium">Product</p>
+                      <div className="flex items-center gap-2">
+                        <img src={currentItem?.items[0]?.product?.thumbnail[0]?.link} alt="img" className="w-6 h-6 inline-block" />
+                        <p className="text-sm text-gray-500">{currentItem?.items[0]?.product?.name}</p>
+                      </div>
                     </li>
                     <li className="mb-4">
-                      <p className="text-sm text-gray-500">17 May 2024</p>
-                      <p className="text-sm text-gray-900 font-semibold">Transaction Confirmed</p>
-                      <p className="text-sm text-gray-500">Balance is sent by customer</p>
+                      <p className="text-lg text-gray-900 font-medium">Variant</p>
+                      <p className="text-sm text-gray-500">{currentItem?.items[0]?.variant?.color?.value} | {currentItem?.items[0]?.variant?.size?.value}</p>
                     </li>
                     <li className="mb-4">
-                      <p className="text-sm text-gray-500">16 May 2024</p>
-                      <p className="text-sm text-gray-900 font-semibold">Transaction has verified</p>
-                      <p className="text-sm text-gray-500">Payment has verified by system</p>
+                      <p className="text-lg text-gray-900 font-medium">Quantity</p>
+                      <p className="text-sm text-gray-500">{currentItem?.items[0]?.quantity} items</p>
+                    </li>
+                    <li className="mb-4">
+                      <p className="text-lg text-gray-900 font-medium">Note</p>
+                      <p className="text-sm text-gray-500">{currentItem?.items[0]?.note}</p>
                     </li>
                   </ul>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Payment Details</h3>
-                <div className="mb-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Payment Method</p>
-                      <p className="text-sm text-gray-900">Credit Card <img src="https://cdn-icons-png.flaticon.com/128/8983/8983163.png" alt="visa" className="w-6 h-6 inline-block ml-2" /></p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Shipment Price</p>
-                      <p className="text-sm text-gray-900">30.000đ</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Total Price</p>
-                      <p className="text-sm text-gray-900">${transactions[0]?.total}</p>
-                    </div>
-                  </div>
-                </div>
                 <div className="flex justify-between items-center mt-6">
-                  <h3 className="text-lg font-semibold">Total</h3>
+                  <p className="text-lg font-semibold">Total</p>
                   <p className="text-lg font-semibold text-gray-900">${transactions[0]?.total}</p>
                 </div>
               </div>

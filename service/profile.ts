@@ -98,6 +98,55 @@ const getAllTransactions = async () => {
     }
 };
 
+const getProductNeedReview = async (accountId: any) => {
+    try {
+        const response = await fetch(API.GET_PRODUCT_NEED_REVIEW + `?accountId=${accountId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const createReview = async (payload: any) => {
+    try {
+        const response = await fetch(API.CREATE_REVIEW, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getProductReviewed = async (accountId: any) => {
+    try {
+        const response = await fetch(API.GET_PRODUCT_REVIEWED + `?accountID=${accountId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 const getAllAddress = async () => {
     try {
         const response = await fetch(API.GET_ALL_ADDRESS_BY_ACCOUNT_ID, {
@@ -147,6 +196,23 @@ const createAddress = async (payload: any) => {
     }
 };
 
+const updatePassword = async (payload: any) => {
+    try {
+        const response = await fetch(API.UPDATE_PASSWORD, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 export const ProfileService = {
     getProfile,
     updateProfile,
@@ -154,7 +220,11 @@ export const ProfileService = {
     deleteNotify,
     getAllOrders,
     getAllTransactions,
+    getProductNeedReview,
+    createReview,
+    getProductReviewed,
     getAllAddress,
     getAllFavourite,
-    createAddress
+    createAddress,
+    updatePassword
 }

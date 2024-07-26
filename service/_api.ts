@@ -1,4 +1,5 @@
 export const HOST = `https://api.kiotfpt.store/v1`;
+export const CLOUDINARY = `https://api.cloudinary.com/v1_1/kiotfpt/image/upload`;
 
 export const API = {
     // auth
@@ -33,7 +34,13 @@ export const API = {
     DELETE_NOTIFY_BY_ID: `${HOST}/notify/delete`,
     GET_ALL_ORDER_BY_ACCOUNT_ID: `${HOST}/order/get-all`,
     GET_ALLTRANSACTION_BY_ACCOUNT_ID: `${HOST}/transaction/get-all`,
+    GET_PRODUCT_NEED_REVIEW: `${HOST}/product/products-no-comments`,
+    CREATE_REVIEW: `${HOST}/comment/create`,
+    GET_PRODUCT_REVIEWED: `${HOST}/comment/get-all`,
     GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
     GET_ALL_FAVORITE_BY_ACCOUNT_ID: `${HOST}/favourite/get-all`,
     CREATE_ADDRESS: `${HOST}/address/create`,
+    UPDATE_PASSWORD: `${HOST}/profile/update-password`,
+    GET_ALL_PROVINCES: `${HOST}/address/province/get-all`,
+    GET_DISTRICT_BY_PROVINCE: `${HOST}/address/district/get-all-by-province`,
 };

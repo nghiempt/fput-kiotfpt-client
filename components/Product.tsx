@@ -3,8 +3,20 @@ import StarIcon from "@mui/icons-material/Star";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { limitString } from "../utils/helper";
 import Link from "next/link";
+import { ProductService } from "../service/product";
 
-export default function CardProduct({ item, index, limit, isFavouriteProductCart = false }: { item: any, index: any, limit: any, isFavouriteProductCart?: any }) {
+export default function CardProduct({ item, index, limit }: { item: any, index: any, limit: any }) {
+
+  const handleLikeProduct = async (e: any, id: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const res = await ProductService.createFavourite(id);
+    if (res?.result) {
+      alert("Add to wishlist successfully");
+    } else {
+      alert("Add to wishlist failed");
+    }
+  }
 
   const renderStar = (rate: number) => {
     const stars = [];
@@ -38,30 +50,9 @@ export default function CardProduct({ item, index, limit, isFavouriteProductCart
       className="border border-gray-200 rounded-md p-2 cursor-pointer hover:border-gray-500"
       style={{ position: 'relative' }}
     >
-      {!isFavouriteProductCart
-        ?
-        <div className="flex justify-center absolute top-2 right-2">
-          <div
-            className={`${item?.isFavourite
-              ? "bg-[rgb(var(--primary-rgb))]"
-              : "border border-gray-300"
-              } rounded-md p-2`}
-          >
-            <FavoriteBorderIcon
-              className={`${item?.isFavourite ? "text-white" : "text-gray-300"
-                }`}
-            />
-          </div>
-        </div>
-        :
-        (
-          <button onClick={(e) => {
-            e.preventDefault();
-            isFavouriteProductCart(item?.id)
-          }} className="absolute top-2 right-2 p-2" style={{ backgroundColor: 'rgb(var(--primary-rgb))', color: '#ffffff', borderRadius: '4px' }}>
-            <FavoriteBorderIcon />
-          </button>
-        )}
+      <button onClick={(e) => handleLikeProduct(e, item?.id)} className={`${false ? 'bg-[rgb(var(--primary-rgb))] hover:bg-gray-200' : 'bg-gray-200 hover:bg-[rgb(var(--primary-rgb))]'} absolute text-white top-2 right-2 p-2 rounded-lg`}>
+        <FavoriteBorderIcon />
+      </button>
       <img src={item?.thumbnail[0]?.link} alt="img" />
       <div className="p-4">
         <div className="flex gap-x-2 items-center">

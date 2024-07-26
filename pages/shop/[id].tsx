@@ -138,7 +138,7 @@ const Page = () => {
                     setProducts(pros?.data);
                 }
             } catch (error) {
-                console.error("Error fetching data:", error);
+                return
             }
         };
         fetch();

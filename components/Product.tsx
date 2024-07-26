@@ -32,8 +32,7 @@ export default function CardProduct({ item, index, limit, isFavouriteProductCart
   return (
     <Link
       href={{
-        pathname: "",
-        query: { id: item?.id },
+        pathname: `/product/${item?.id}`,
       }}
       key={index}
       className="border border-gray-200 rounded-md p-2 cursor-pointer hover:border-gray-500"

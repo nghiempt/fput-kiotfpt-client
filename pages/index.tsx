@@ -85,14 +85,23 @@ const Page = () => {
                 <div className="w-full flex flex-col justify-center items-center">
                     <div className="w-2/3 h-[380px] flex gap-x-4 border border-[#E0E0E0] rounded-[6px] p-5 box-border">
                         <div className="font-regular w-1/5 text-[16px]">
-                            <div className="font-black text-[20px] text-gray-700 hover:bg-[#E5F1FF] rounded-[6px] hover:cursor-pointer py-2 pl-2">
+                            <div className="font-black text-[20px] text-gray-700 py-2 pl-2">
                                 Popular Brands
                             </div>
                             {
                                 brands?.slice(0, 5)?.map((item: any, index: any) => {
                                     return (
-                                        <Link key={index} href="">
-                                            <div className="focus:font-medium hover:bg-[#eee] rounded-[6px] hover:cursor-pointer py-2 pl-2 flex justify-start items-center gap-6">
+                                        <Link
+                                            key={index}
+                                            href={{
+                                                pathname: "/product",
+                                                query: { brand: item?.brand_id },
+                                            }}
+                                            replace
+                                            scroll={false}
+                                            prefetch={true}
+                                        >
+                                            <div className="focus:font-medium hover:bg-[#eee] hover:text-black hover:font-bold rounded-[6px] hover:cursor-pointer py-2 pl-2 flex justify-start items-center gap-6">
                                                 <img src={item?.brand_thumbnail} alt="img" style={{ width: "40px", height: "40px" }} className="rounded-full" />
                                                 <h1>{item?.brand_name}</h1>
                                             </div>
@@ -125,7 +134,7 @@ const Page = () => {
                                             <div>
                                                 <button
                                                     onClick={handleOpenModalSignUp}
-                                                    className="w-full py-2 bg-[rgb(var(--quaternary-rgb))] text-white rounded-[6px] mt-2"
+                                                    className="w-full py-2 bg-[rgb(var(--quaternary-rgb))] text-white hover:opacity-80 rounded-[6px] mt-2"
                                                 >
                                                     Join now
                                                 </button>
@@ -133,7 +142,7 @@ const Page = () => {
                                             <div>
                                                 <button
                                                     onClick={handleOpenModalSignIn}
-                                                    className="w-full py-2 bg-white text-[rgb(var(--quaternary-rgb))] rounded-[6px] mt-2"
+                                                    className="w-full py-2 bg-white text-[rgb(var(--quaternary-rgb))] hover:bg-gray-100 rounded-[6px] mt-2"
                                                 >
                                                     Sign In
                                                 </button>
@@ -181,7 +190,16 @@ const Page = () => {
                         <div className=" grid grid-cols-8 mt-4 gap-4">
                             {categories?.slice(0, 8)?.map((item: any, index: any) => {
                                 return (
-                                    <Link href="" key={index} className="flex border border-[#E0E0E0] rounded-lg items-center justify-center">
+                                    <Link href={{
+                                        pathname: "/product",
+                                        query: { category: item?.id },
+                                    }}
+                                        key={index}
+                                        replace
+                                        scroll={false}
+                                        prefetch={true}
+                                        className="flex border border-[#E0E0E0] hover:border-gray-700 hover:text-black rounded-lg items-center justify-center"
+                                    >
                                         <div
                                             className="flex flex-col items-center justify-center text-center p-4 gap-4"
                                         >
@@ -221,11 +239,10 @@ const Page = () => {
                                 return (
                                     <Link
                                         href={{
-                                            pathname: "",
-                                            query: { id: item?.id },
+                                            pathname: `/product/${item?.id}`,
                                         }}
                                         key={index}
-                                        className="flex flex-col items-center justify-center text-center border border-[#E0E0E0] rounded-md p-2 cursor-pointer"
+                                        className="flex flex-col items-center hover:border-gray-700 justify-center text-center border border-[#E0E0E0] rounded-md p-2 cursor-pointer"
                                     >
                                         <img
                                             src={item?.thumbnail[0]?.link}
@@ -245,13 +262,19 @@ const Page = () => {
                         <div className="font-black text-2xl text-gray-700 mt-10">Popular Shops</div>
                         {shops.slice(0, 2)?.map((item: any, index: any) => {
                             return (
-                                <div key={index} className="w-full flex border border-[#E0E0E0] rounded-md my-5">
+                                <Link
+                                    key={index}
+                                    href={{
+                                        pathname: `/shop/${item?.id}`,
+                                    }}
+                                    className="w-full flex border border-[#E0E0E0] rounded-md my-5"
+                                >
                                     <div className="p-4 w-1/5 relative">
                                         <img
                                             src={item?.thumbnail}
                                             alt="img"
                                             style={{ width: "100%", height: "100%" }}
-                                            className="rounded-md"
+                                            className="rounded-md hover:opacity-80"
                                         />
                                         <div className="absolute top-4 left-4 flex flex-col justify-center items-start gap-2">
                                             <h1 className="text-white text-[18px] font-black bg-[rgb(var(--primary-rgb))] px-4 py-2 rounded-md">
@@ -263,40 +286,20 @@ const Page = () => {
                                         <div className="w-full grid grid-cols-4">
                                             {item?.product.slice(0, 4)?.map((item: any, index: any) => {
                                                 return (
-                                                    <div key={index} className="border-l border-[#E0E0E0] p-2">
-                                                        <div className="text-[#1C1C1C] text-[16px] p-2">
-                                                            {limitString(item?.name, 20)}
-                                                        </div>
-                                                        <div className="flex justify-between px-2">
-                                                            <div className="text-[#8B96A5] text-[13px] mt-2">
-                                                                <div>5 stars review</div>
-                                                                <div>$189.7</div>
-                                                            </div>
-                                                            <img
-                                                                src={item?.thumbnail[0]?.link}
-                                                                alt="img"
-                                                                style={{ width: "82px", height: "82px" }}
-                                                                className="rounded-md"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                        <div className="w-full grid grid-cols-4">
-                                            {item?.product.slice(4, 8)?.map((item: any, index: any) => {
-                                                return (
-                                                    <div
+                                                    <Link
                                                         key={index}
-                                                        className="border-l border-t border-[#E0E0E0] p-2"
+                                                        href={{
+                                                            pathname: `/product/${item?.id}`,
+                                                        }}
+                                                        className="border-l border-[#E0E0E0] p-2 hover:font-bold"
                                                     >
                                                         <div className="text-[#1C1C1C] text-[16px] p-2">
                                                             {limitString(item?.name, 20)}
                                                         </div>
                                                         <div className="flex justify-between px-2">
                                                             <div className="text-[#8B96A5] text-[13px] mt-2">
-                                                                <div>5 stars review</div>
-                                                                <div>$189.7</div>
+                                                                <div>{item?.rate} stars review</div>
+                                                                <div>${item?.min_price} - ${item?.max_price}</div>
                                                             </div>
                                                             <img
                                                                 src={item?.thumbnail[0]?.link}
@@ -305,12 +308,41 @@ const Page = () => {
                                                                 className="rounded-md"
                                                             />
                                                         </div>
-                                                    </div>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                        <div className="w-full grid grid-cols-4">
+                                            {item?.product.slice(4, 8)?.map((item: any, index: any) => {
+                                                return (
+                                                    <Link
+                                                        key={index}
+                                                        href={{
+                                                            pathname: `/product/${item?.id}`,
+                                                        }}
+                                                        className="border-l border-t border-[#E0E0E0] p-2 hover:font-bold"
+                                                    >
+                                                        <div className="text-[#1C1C1C] text-[16px] p-2">
+                                                            {limitString(item?.name, 20)}
+                                                        </div>
+                                                        <div className="flex justify-between px-2">
+                                                            <div className="text-[#8B96A5] text-[13px] mt-2">
+                                                                <div>{item?.rate} stars review</div>
+                                                                <div>${item?.min_price} - ${item?.max_price}</div>
+                                                            </div>
+                                                            <img
+                                                                src={item?.thumbnail[0]?.link}
+                                                                alt="img"
+                                                                style={{ width: "82px", height: "82px" }}
+                                                                className="rounded-md"
+                                                            />
+                                                        </div>
+                                                    </Link>
                                                 );
                                             })}
                                         </div>
                                     </div>
-                                </div>
+                                </Link>
                             )
                         }
                         )}

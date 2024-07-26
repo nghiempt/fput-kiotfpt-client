@@ -12,7 +12,7 @@ export default function Wishlist() {
       if (prof?.result) {
         setProducts(prof?.data);
       } else {
-        console.log(prof.data);
+        return
       }
     }
     fetch();

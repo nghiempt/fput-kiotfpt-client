@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, Icon, Progress } from 'semantic-ui-react';
+import { Button, Divider, Icon } from 'semantic-ui-react';
 import { ProfileService } from "../../service/profile";
 
 export default function Order() {
@@ -11,9 +11,8 @@ export default function Order() {
       const prof = await ProfileService.getAllOrders();
       if (prof?.result) {
         setOrders(prof?.data);
-        console.log(prof?.data);
       } else {
-        console.log("wrong");
+        return
       }
     }
     fetch();

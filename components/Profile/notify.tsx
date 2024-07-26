@@ -13,7 +13,7 @@ export default function Notify() {
       if (prof?.result) {
         setNotifies(prof?.data);
       } else {
-        console.log("wrong");
+        return
       }
     }
     fetch();
@@ -24,7 +24,7 @@ export default function Notify() {
     if (prof?.result) {
       handleGetNotify();
     } else {
-      console.log(prof.data);
+      return
     }
   }
 

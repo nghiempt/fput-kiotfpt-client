@@ -11,9 +11,8 @@ export default function Review() {
       const prof = await ProfileService.getAllFavourite();
       if (prof?.result) {
         setProducts(prof?.data);
-        console.log(prof.data);
       } else {
-        console.log(prof.data);
+        return
       }
     }
     fetch();

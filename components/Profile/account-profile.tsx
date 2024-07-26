@@ -19,8 +19,6 @@ export default function AccountProfile() {
       phone: profile?.phone,
       thumbnail: "https://cdn-icons-png.flaticon.com/128/2111/2111463.png",
     }
-    console.log(payload);
-
     const res = await ProfileService.updateProfile(payload);
     if (res?.result) {
       // window.location.reload();

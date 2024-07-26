@@ -1,8 +1,26 @@
 import { API } from "./_api";
+import Cookie from "js-cookie";
 
-const getShopByID = async (id: string) => {
+const checkout = async (payload: any) => {
     try {
-        const response = await fetch(API.GET_SHOP_BY_ID + `/${id}`, {
+        const response = await fetch(API.CHECKOUT, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getVoucherByShop = async (shopID: any) => {
+    try {
+        const response = await fetch(API.GET_VOUCHER_BY_SHOP + `?shopID=${shopID}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -15,22 +33,7 @@ const getShopByID = async (id: string) => {
     }
 };
 
-const getProductByShop = async (shopID: string, type: string, page: number, amount: number) => {
-    try {
-        const response = await fetch(API.GET_PRODUCT_BY_SHOP + `?shopID=${shopID}&type=${type}&page=${page}&amount=${amount}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        const data = await response.json();
-        return data
-    } catch (err) {
-        return false;
-    }
-};
-
-export const ShopService = {
-    getShopByID,
-    getProductByShop
+export const CheckoutService = {
+    checkout,
+    getVoucherByShop
 }

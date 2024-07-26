@@ -1,28 +1,28 @@
 import Head from 'next/head';
 import CardProduct from "../../components/Product";
 import CheckIcon from "@mui/icons-material/Check";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import LanguageIcon from "@mui/icons-material/Language";
 import MessageIcon from "@mui/icons-material/Message";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import StarIcon from "@mui/icons-material/Star";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
-import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
-import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { Divider } from "@mui/material";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { ProductService } from '../../service/product';
 import { ShopService } from '../../service/shop';
+import { SemanticToastContainer, toast } from 'react-semantic-toasts';
+import Cookie from "js-cookie";
+import { useRouter } from 'next/router';
 
 const Page = () => {
 
-    const searchParams = useSearchParams();
-    const account_id = "1";
+    const router = useRouter();
+    const { id } = router.query as any;
+
+    const account_id = JSON.parse(Cookie.get("auth") || "{}")?.account_id;
     const defaultImage = "https://cdn-icons-png.flaticon.com/128/4904/4904233.png";
 
     const [hoveredImage, setHoveredImage] = useState(null);
@@ -98,13 +98,38 @@ const Page = () => {
     };
 
     const addItemToCart = async () => {
-        // const dataC = await CartService.addToCart(dataAddToCart);
-        // if (dataC?.result) {
-        //     alert("Added to cart");
-        // } else {
-        //     alert("Add to cart failed");
-        // }
+        const res = await ProductService.addProductToCart(dataAddToCart);
+        if (res?.result) {
+            toast({
+                type: 'success',
+                title: 'Success',
+                description: 'Add to cart success',
+                time: 1000
+            })
+            handleClear()
+        } else {
+            toast({
+                type: 'error',
+                title: 'Error',
+                description: 'Add to cart error',
+                time: 1000
+            })
+            handleClear()
+        }
     };
+
+    const handleClear = () => {
+        setQuantity(0);
+        setNote("");
+        setSelectedClassify(null);
+        setVariantId(null);
+        setDataAddToCart({
+            account_id: account_id,
+            amount: quantity,
+            note: note,
+            variant_id: variantId,
+        });
+    }
 
     const handleNoteChange = (event: any) => {
         const newNote = event.target.value;
@@ -117,18 +142,19 @@ const Page = () => {
 
     useEffect(() => {
         const fetch = async () => {
-            const pros = await ShopService.getProductByShop("10", "all", 1, 12);
-            if (pros?.result) {
-                setProducts(pros?.data?.products);
-            }
-            const proDetail = await ProductService.getProductByID(14);
+
+            const proDetail = await ProductService.getProductByID(id || 0);
             if (proDetail?.result) {
                 setCurrentProduct(proDetail?.data);
                 setSelectedImage(currentProduct?.thumbnail[0]?.link);
+                const pros = await ShopService.getProductByShop(proDetail?.data?.shop?.id, "all", 1, 12);
+                if (pros?.result) {
+                    setProducts(pros?.data?.products);
+                }
             }
         };
         fetch();
-    }, [currentProduct?.thumbnail[0]?.link]);
+    }, [currentProduct?.thumbnail[0]?.link, id]);
 
     useEffect(() => {
         if (selectedClassify) {
@@ -148,7 +174,10 @@ const Page = () => {
                 <meta name="keywords" content="" />
             </Head>
             <div className="w-full flex flex-col justify-center items-center">
-                <div className="w-2/3 flex gap-x-4 border border-[#E0E0E0] rounded-[6px] p-5 my-2 box-border">
+                <div className="w-2/3 flex flex-col gap-x-4 border border-[#E0E0E0] rounded-[6px] p-5 my-2 box-border">
+                    <div className='w-2/3 flex flex-col justify-center items-center'>
+                        <SemanticToastContainer className="w-full" />
+                    </div>
                     <div className="w-full flex gap-x-5">
                         <div className="w-2/5 flex flex-col gap-4">
                             <div className="flex justify-center">
@@ -280,12 +309,12 @@ const Page = () => {
                                         return (
                                             <div
                                                 key={index}
-                                                className={`flex w-full ${classifyClass} rounded-md px-3 py-1 items-center cursor-pointer`}
+                                                className={`flex w-full ${classifyClass} rounded-md px-3 py-1 items-center cursor-pointer hover:font-bold`}
                                                 onClick={() => handleSelectClassify(item)}
                                             >
-                                                <h1 className="text-[#606060] w-full text-[12px]">
+                                                <div className="text-[#606060] w-full text-[12px]">
                                                     {item?.color?.value} - {item?.size?.value}
-                                                </h1>
+                                                </div>
                                             </div>
                                         );
                                     })}
@@ -335,7 +364,7 @@ const Page = () => {
                             <div className="border rounded-md p-4 flex flex-col">
                                 <Link
                                     href={{
-                                        pathname: "",
+                                        pathname: `/shop/${currentProduct?.shop?.id}`,
                                     }}
                                 >
                                     <div className="flex gap-x-2 cursor-pointer">
@@ -389,16 +418,6 @@ const Page = () => {
                                     <LanguageIcon style={{ width: "20px", height: "20px" }} />
                                     <h1>Worldwide Shipping</h1>
                                 </div>
-                                <button className="w-full py-2 mt-4 bg-[rgb(var(--primary-rgb))] text-white rounded-[6px]">
-                                    Seller’s profile
-                                </button>
-                            </div>
-                            <div className="flex gap-x-2 py-2 justify-center items-center mt-2 cursor-pointer border rounded-md">
-                                <FavoriteBorderOutlinedIcon className="text-[rgb(var(--quaternary-rgb))]" />
-                                <h1 className="text-[rgb(var(--quaternary-rgb))]">
-                                    {" "}
-                                    Save for later
-                                </h1>
                             </div>
                         </div>
                     </div>
@@ -460,15 +479,6 @@ const Page = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="flex mt-2 gap-x-2">
-                                                        <div className="flex">
-                                                            <ThumbUpOutlinedIcon className="border-t border-b border-l rounded-l-xs p-2" />
-                                                            <ThumbDownOutlinedIcon className="border border-r rounded-r-xs p-2" />
-                                                        </div>
-                                                        <div>
-                                                            <MoreVertIcon className="border rounded-xs p-2" />
-                                                        </div>
-                                                    </div>
                                                 </div>
                                                 <h1 className="py-4">{item?.content}</h1>
                                                 {currentProduct.comments.length > 1 &&
@@ -488,7 +498,13 @@ const Page = () => {
                                 <h1 className="font-black text-white pl-3 py-2 rounded-md text-[18px] mb-4 w-full bg-[rgb(var(--quaternary-rgb))]">You may like</h1>
                                 {products?.slice(0, 4)?.map((item: any, index: any) => {
                                     return (
-                                        <div key={index} className="flex gap-x-2 mb-4">
+                                        <Link
+                                            key={index}
+                                            href={{
+                                                pathname: `/product/${item?.id}`,
+                                            }}
+                                            className="flex gap-x-2 items-center mb-4 hover:font-black cursor-pointer"
+                                        >
                                             <img
                                                 className="border rounded-md"
                                                 src={item?.thumbnail[0]?.link}
@@ -496,34 +512,32 @@ const Page = () => {
                                                 style={{ width: "30%" }}
                                             />
                                             <div className="flex flex-col gap-1">
-                                                <h1 className="text-gray-700 text-[14px] font-semibold">
+                                                <div className="text-gray-700 text-[14px]">
                                                     {item?.name}
-                                                </h1>
-                                                <h1 className="text-gray-500">
+                                                </div>
+                                                <div className="text-gray-500">
                                                     {item?.minPrice === item?.maxPrice
                                                         ? `$${item?.minPrice}`
                                                         : `$${item?.minPrice} - $${item?.maxPrice}`}
-                                                </h1>
-                                                <h1 className="text-gray-500">
+                                                </div>
+                                                <div className="text-gray-500">
                                                     {item?.sold} sold{item?.sold > 1 ? "s" : ""}
-                                                </h1>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </Link>
                                     );
                                 })}
                             </div>
                         </div>
                     </div>
-                    <div className="w-full my-8">
+                    <div className="w-full mt-8 mb-20">
                         <div className="">
                             <h1 className="font-black text-2xl mb-4 text-gray-700">
                                 Related Products
                             </h1>
                             <div className="grid grid-cols-5 gap-x-4">
                                 {products.slice(0, 5)?.map((item: any, index: any) => {
-                                    return <div key={index}>
-                                        <CardProduct item={item} index={index} limit={100} />
-                                    </div>;
+                                    return <CardProduct item={item} index={index} limit={100} />
                                 })}
                             </div>
                         </div>

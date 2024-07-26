@@ -10,8 +10,9 @@ import Box from "@mui/material/Box";
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import FmdGoodIcon from '@mui/icons-material/FmdGood';
-import { ShopService } from "../service/shop";
-import CardProduct from "../components/Product";
+import { ShopService } from '../../service/shop';
+import CardProduct from '../../components/Product';
+import { useRouter } from 'next/router';
 
 interface CustomTabPanelProps {
     children: React.ReactNode;
@@ -48,6 +49,9 @@ function a11yProps(index: any) {
 }
 
 const Page = () => {
+
+    const router = useRouter();
+    const { id } = router.query as any;
 
     const [shop, setShop] = useState<any>(null);
     const [tab, setTab] = React.useState(0);
@@ -109,7 +113,7 @@ const Page = () => {
 
     const loadProduct = async (type: string, page: number) => {
         setLoading(true);
-        const res = await ShopService.getProductByShop("10", type, page, 12);
+        const res = await ShopService.getProductByShop(id, type, page, 12);
         if (res?.result) {
             setProducts(res?.data);
         }
@@ -124,8 +128,8 @@ const Page = () => {
                     sh,
                     pros,
                 ] = await Promise.all([
-                    ShopService.getShopByID("10"),
-                    ShopService.getProductByShop("10", "all", 1, 12)
+                    ShopService.getShopByID(id),
+                    ShopService.getProductByShop(id, "all", 1, 12)
                 ]);
                 if (sh?.result) {
                     setShop(sh?.data);
@@ -139,7 +143,7 @@ const Page = () => {
         };
         fetch();
         setLoading(false);
-    }, []);
+    }, [id]);
 
     return (
         <>
@@ -264,7 +268,7 @@ const Page = () => {
                                                                 }
                                                             </div>
                                                     }
-                                                    <div className="flex justify-center my-10">
+                                                    <div className="flex justify-center my-10 mb-20">
                                                         <Pagination
                                                             count={products?.totalPage}
                                                             variant="outlined"
@@ -293,7 +297,7 @@ const Page = () => {
                                                                 }
                                                             </div>
                                                     }
-                                                    <div className="flex justify-center my-10">
+                                                    <div className="flex justify-center my-10 mb-20">
                                                         <Pagination
                                                             count={products?.totalPage}
                                                             variant="outlined"
@@ -322,7 +326,7 @@ const Page = () => {
                                                                 }
                                                             </div>
                                                     }
-                                                    <div className="flex justify-center my-10">
+                                                    <div className="flex justify-center my-10 mb-20">
                                                         <Pagination
                                                             count={products?.totalPage}
                                                             variant="outlined"
@@ -351,7 +355,7 @@ const Page = () => {
                                                                 }
                                                             </div>
                                                     }
-                                                    <div className="flex justify-center my-10">
+                                                    <div className="flex justify-center my-10 mb-20">
                                                         <Pagination
                                                             count={products?.totalPage}
                                                             variant="outlined"
@@ -380,7 +384,7 @@ const Page = () => {
                                                                 }
                                                             </div>
                                                     }
-                                                    <div className="flex justify-center my-10">
+                                                    <div className="flex justify-center my-10 mb-20">
                                                         <Pagination
                                                             count={products?.totalPage}
                                                             variant="outlined"
@@ -409,7 +413,7 @@ const Page = () => {
                                                                 }
                                                             </div>
                                                     }
-                                                    <div className="w-full flex justify-center mt-8">
+                                                    <div className="w-full flex justify-center my-10 mb-20">
                                                         <Pagination
                                                             count={products?.totalPage}
                                                             variant="outlined"

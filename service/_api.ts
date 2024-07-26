@@ -15,9 +15,17 @@ export const API = {
     // product
     GET_PRODUCT_BY_TYPE: `${HOST}/product/get-by-type`,
     GET_PRODUCT_BY_ID: `${HOST}/product/detail`,
+    GET_PRODUCT_BY_BRAND: `${HOST}/product/get-by-brand`,
+    GET_PRODUCT_BY_CATEGORY: `${HOST}/product/get-by-category`,
     CREATE_FAVORITE: `${HOST}/favorite/create`,
     // cart
     GET_CART: `${HOST}/cart`,
+    ADD_TO_CART: `${HOST}/item/add-to-cart`,
+    REMOVE_FROM_CART: `${HOST}/item/delete`,
+    UPDATE_AMOUNT: `${HOST}/item/update-amount`,
+    // checkout
+    CHECKOUT: `${HOST}/order/checkout`,
+    GET_VOUCHER_BY_SHOP: `${HOST}/voucher/get-by-shop`,
     // profile
     GET_PROFILE: `${HOST}/profile`,
     UPDATE_PROFILE: `${HOST}/profile/update`,

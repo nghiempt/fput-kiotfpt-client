@@ -19,7 +19,7 @@ const Address = () => {
       if (prof?.result) {
         setAddresses(prof?.data);
       } else {
-        console.log("wrong");
+        return
       }
     }
     fetch();

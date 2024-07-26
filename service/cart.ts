@@ -1,4 +1,5 @@
 import { API } from "./_api";
+import Cookie from "js-cookie";
 
 const getCart = async () => {
     try {
@@ -6,7 +7,39 @@ const getCart = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const removeItemInCart = async (id: any) => {
+    try {
+        const response = await fetch(API.REMOVE_FROM_CART + `/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const updateAmountCart = async (id: any, amount: any) => {
+    try {
+        const response = await fetch(API.UPDATE_AMOUNT + `?itemId=${id}&newAmount=${amount}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
         });
         const data = await response.json();
@@ -18,4 +51,6 @@ const getCart = async () => {
 
 export const CartService = {
     getCart,
+    removeItemInCart,
+    updateAmountCart
 }

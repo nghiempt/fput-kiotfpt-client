@@ -1,4 +1,20 @@
 import { API } from "./_api";
+import Cookie from "js-cookie";
+
+const searchProduct = async (key: string, page: number, amount: number) => {
+    try {
+        const response = await fetch(API.SEARCH_PRODUCT + `?key=${key}&page=${page}&amount=${amount}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
 
 const getProductByType = async (type: string, page: number, amount: number) => {
     try {
@@ -6,8 +22,54 @@ const getProductByType = async (type: string, page: number, amount: number) => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
             },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getProductByBrand = async (brandID: string, page: number, amount: number) => {
+    try {
+        const response = await fetch(API.GET_PRODUCT_BY_BRAND + `?brandID=${brandID}&page=${page}&amount=${amount}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getProductByCategory = async (categoryID: string, page: number, amount: number) => {
+    try {
+        const response = await fetch(API.GET_PRODUCT_BY_CATEGORY + `?categoryID=${categoryID}&page=${page}&amount=${amount}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const addProductToCart = async (payload: any) => {
+    try {
+        const response = await fetch(API.ADD_TO_CART, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+            body: JSON.stringify(payload)
         });
         const data = await response.json();
         return data
@@ -22,7 +84,6 @@ const getProductByID = async (id: number) => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
             },
         });
         const data = await response.json();
@@ -38,7 +99,7 @@ const createFavourite = async (productID: number) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodW5nMTYxMzIwMTZAZ21haWwuY29tIiwiaWF0IjoxNzIxNzI2NTQ3LCJleHAiOjE3MjE4MTI5NDd9.6wsM0siJgeoXx8ILpF40SWqRvNUHb9CkJQMc1XS-5XA`,
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
         });
         const data = await response.json();
@@ -49,7 +110,11 @@ const createFavourite = async (productID: number) => {
 };
 
 export const ProductService = {
+    searchProduct,
     getProductByType,
+    getProductByBrand,
+    getProductByCategory,
     getProductByID,
-    createFavourite
+    createFavourite,
+    addProductToCart
 }

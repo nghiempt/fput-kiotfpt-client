@@ -13,7 +13,7 @@ export default function Transaction() {
       if (prof?.result) {
         setTransactions(prof?.data);
       } else {
-        console.log("wrong");
+        return
       }
     }
     fetch();

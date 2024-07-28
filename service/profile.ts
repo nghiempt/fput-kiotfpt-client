@@ -182,6 +182,8 @@ const getAllFavourite = async () => {
 };
 
 const createAddress = async (payload: any) => {
+    console.log(payload);
+    
     try {
         const response = await fetch(API.CREATE_ADDRESS, {
             method: "POST",
@@ -192,6 +194,8 @@ const createAddress = async (payload: any) => {
             body: JSON.stringify(payload),
         });
         const data = await response.json();
+        console.log(data);
+        
         return data
     } catch (err) {
         return false;

@@ -19,7 +19,7 @@ const Page = () => {
 
     const handleSendReview = async (productID: any, e: any) => {
         const payload = {
-            account_id: 103,
+            account_id: 105,
             product_id: productID,
             rate: rate,
             content: review,
@@ -39,8 +39,8 @@ const Page = () => {
                     need,
                     reviewed,
                 ] = await Promise.all([
-                    ProfileService.getProductNeedReview(103),
-                    ProfileService.getProductReviewed(103),
+                    ProfileService.getProductNeedReview(105),
+                    ProfileService.getProductReviewed(105),
                 ]);
                 if (need?.result) {
                     setProductsNeedReview(need?.data);

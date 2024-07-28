@@ -6,8 +6,8 @@ import {
     Modal,
     FormField,
     Button,
-    Checkbox,
-    Form
+    Form,
+    Checkbox
 } from 'semantic-ui-react'
 import { toast } from 'react-semantic-toasts'
 import { AuthService } from '../../service/auth'
@@ -25,6 +25,8 @@ const ModalSignUp: React.FC<ModalSignUpProps> = ({ open, setOpen, initialData })
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [confirmPassword, setConfirmPassword] = React.useState('')
+
+    const [isShowPassword, setIsShowPassword] = React.useState(false)
 
     const validate = () => {
         if (username === '') {
@@ -45,6 +47,10 @@ const ModalSignUp: React.FC<ModalSignUpProps> = ({ open, setOpen, initialData })
         }
     }
 
+    const showPassword = (e: any, data: any) => {
+        setIsShowPassword(data.checked)
+    }
+
     const submit = async () => {
         if (!validate()) {
             return
@@ -60,7 +66,7 @@ const ModalSignUp: React.FC<ModalSignUpProps> = ({ open, setOpen, initialData })
                 toast({
                     type: 'success',
                     title: 'Success',
-                    description: 'Sign up success',
+                    description: res?.message,
                     time: 1000
                 })
                 handleClear()
@@ -68,7 +74,7 @@ const ModalSignUp: React.FC<ModalSignUpProps> = ({ open, setOpen, initialData })
                 toast({
                     type: 'error',
                     title: 'Error',
-                    description: 'Sign up failed',
+                    description: res?.message,
                     time: 1000
                 })
                 handleClear()
@@ -115,24 +121,36 @@ const ModalSignUp: React.FC<ModalSignUpProps> = ({ open, setOpen, initialData })
                     </FormField>
                     <FormField>
                         <label>Password</label>
-                        <input placeholder='Password' value={password} onChange={(e) => { setPassword(e.target.value); setMessage('done') }} />
+                        <input
+                            type={isShowPassword ? 'text' : 'password'}
+                            placeholder='Password'
+                            value={password}
+                            onChange={(e) => { setPassword(e.target.value); setMessage('done') }}
+                        />
                     </FormField>
                     <FormField>
                         <label>Confirm Password</label>
-                        <input placeholder='Confirm Password' value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); setMessage('done') }} />
+                        <input
+                            type={isShowPassword ? 'text' : 'password'}
+                            placeholder='Confirm Password'
+                            value={confirmPassword}
+                            onChange={(e) => { setConfirmPassword(e.target.value); setMessage('done') }}
+                        />
                     </FormField>
-                    <FormField>
-                        <Checkbox label='I agree to the Terms and Conditions' />
-                    </FormField>
+                    <div className='w-full flex justify-end items-center'>
+                        <FormField>
+                            <Checkbox label='Show password' onChange={showPassword} />
+                        </FormField>
+                    </div>
                 </Form>
             </ModalContent>
             <ModalActions>
-                <Button color='grey' onClick={handleClear}>
+                <Button className='!bg-gray-300' onClick={handleClear}>
                     Cancel
                 </Button>
                 <Button
                     content="Submit"
-                    className='!bg-[rgb(78,178,173)]'
+                    className='!bg-[rgb(3,52,110)]'
                     labelPosition='right'
                     icon='checkmark'
                     onClick={submit}

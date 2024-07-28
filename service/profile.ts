@@ -132,6 +132,7 @@ const createReview = async (payload: any) => {
 };
 
 const getProductReviewed = async (accountId: any) => {
+    console.log(accountId);
     try {
         const response = await fetch(API.GET_PRODUCT_REVIEWED + `?accountID=${accountId}`, {
             method: "GET",
@@ -141,6 +142,7 @@ const getProductReviewed = async (accountId: any) => {
             },
         });
         const data = await response.json();
+        console.log(data);
         return data
     } catch (err) {
         return false;
@@ -196,6 +198,22 @@ const createAddress = async (payload: any) => {
     }
 };
 
+const setDefaultAddress = async (id: any) => {
+    try {
+        const response = await fetch(API.SET_DEFAULT_ADDRESS + `/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 const updatePassword = async (payload: any) => {
     try {
         const response = await fetch(API.UPDATE_PASSWORD, {
@@ -205,6 +223,22 @@ const updatePassword = async (payload: any) => {
                 "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
             },
             body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const cancelOrder = async (orderID: any, status: any) => {
+    try {
+        const response = await fetch(API.CANCEL_ORDER + `/${orderID}?status=${status}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
         });
         const data = await response.json();
         return data
@@ -226,5 +260,7 @@ export const ProfileService = {
     getAllAddress,
     getAllFavourite,
     createAddress,
-    updatePassword
+    setDefaultAddress,
+    updatePassword,
+    cancelOrder
 }

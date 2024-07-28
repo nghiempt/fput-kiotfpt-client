@@ -13,9 +13,10 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { ProductService } from '../../service/product';
 import { ShopService } from '../../service/shop';
-import { SemanticToastContainer, toast } from 'react-semantic-toasts';
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import Cookie from "js-cookie";
 import { useRouter } from 'next/router';
+import { toast } from 'react-semantic-toasts';
 
 const Page = () => {
 
@@ -25,6 +26,7 @@ const Page = () => {
     const account_id = JSON.parse(Cookie.get("auth") || "{}")?.account_id;
     const defaultImage = "https://cdn-icons-png.flaticon.com/128/4904/4904233.png";
 
+    const [isLike, setIsLike] = React.useState(false);
     const [hoveredImage, setHoveredImage] = useState(null);
     const [products, setProducts] = useState([]);
     const [selectedClassify, setSelectedClassify] = useState<{ id: any } | null>(null);
@@ -79,7 +81,7 @@ const Page = () => {
     ];
     const isAllSelected = selectedClassify && quantity > 0;
     const buttonClass = isAllSelected
-        ? "border px-2 py-2 bg-[rgb(var(--quaternary-rgb))] rounded-md w-full cursor-pointer text-white"
+        ? "border px-2 py-2 bg-[rgb(var(--secondary-rgb))] rounded-md w-full cursor-pointer text-white"
         : "border px-2 py-2 bg-gray-300 rounded-md w-full cursor-not-allowed";
 
     const handleSelectClassify = (classtify: any) => {
@@ -140,20 +142,59 @@ const Page = () => {
         }));
     };
 
-    useEffect(() => {
-        const fetch = async () => {
+    const handleLikeProduct = async (id: any) => {
+        if (isLike) {
+            router.push('/profile/wishlist');
+            return;
+        }
+        const res = await ProductService.createFavourite(id);
+        if (res?.result) {
+            toast({
+                type: 'success',
+                title: 'Success',
+                description: res?.message,
+                time: 1000
+            })
+            init()
+        } else {
+            toast({
+                type: 'error',
+                title: 'Error',
+                description: res?.message,
+                time: 1000
+            })
+            init()
+        }
+    }
 
+    const init = async () => {
+        setIsLike(false);
+        const authCookie = Cookie.get('auth');
+        const fetch = async () => {
             const proDetail = await ProductService.getProductByID(id || 0);
             if (proDetail?.result) {
-                setCurrentProduct(proDetail?.data);
+                setCurrentProduct(proDetail?.data?.product);
+                if (proDetail?.data?.profiles?.length > 0) {
+                    proDetail?.data?.profiles?.forEach((element: any) => {
+                        if (authCookie) {
+                            if (JSON.parse(authCookie).account_id.toString() === element?.account_id.toString()) {
+                                setIsLike(true);
+                            }
+                        }
+                    });
+                }
                 setSelectedImage(currentProduct?.thumbnail[0]?.link);
-                const pros = await ShopService.getProductByShop(proDetail?.data?.shop?.id, "all", 1, 12);
+                const pros = await ShopService.getProductByShop(proDetail?.data?.product?.shop?.id, "all", 1, 12);
                 if (pros?.result) {
                     setProducts(pros?.data?.products);
                 }
             }
         };
         fetch();
+    }
+
+    useEffect(() => {
+        init()
     }, [currentProduct?.thumbnail[0]?.link, id]);
 
     useEffect(() => {
@@ -175,9 +216,6 @@ const Page = () => {
             </Head>
             <div className="w-full flex flex-col justify-center items-center">
                 <div className="w-2/3 flex flex-col gap-x-4 border border-[#E0E0E0] rounded-[6px] p-5 my-2 box-border">
-                    <div className='w-2/3 flex flex-col justify-center items-center'>
-                        <SemanticToastContainer className="w-full" />
-                    </div>
                     <div className="w-full flex gap-x-5">
                         <div className="w-2/5 flex flex-col gap-4">
                             <div className="flex justify-center">
@@ -367,7 +405,7 @@ const Page = () => {
                                         pathname: `/shop/${currentProduct?.shop?.id}`,
                                     }}
                                 >
-                                    <div className="flex gap-x-2 cursor-pointer">
+                                    <div className="flex gap-x-4 cursor-pointer hover:text-black">
                                         <img
                                             src={currentProduct?.shop?.thumbnail}
                                             alt="img"
@@ -375,10 +413,10 @@ const Page = () => {
                                             className="rounded-md"
                                         />
                                         <div className="text-[12px] flex flex-col justify-center">
-                                            <h1 className="text-[16px] font-semibold">
+                                            <div className="text-[16px] font-medium hover:font-bold">
                                                 {currentProduct?.shop?.name}
-                                            </h1>
-                                            <h1>
+                                            </div>
+                                            <div>
                                                 {Array.from(
                                                     { length: Math.floor(currentProduct?.shop?.rate) },
                                                     (_, index) => (
@@ -397,7 +435,7 @@ const Page = () => {
                                                         />
                                                     )
                                                 )}
-                                            </h1>
+                                            </div>
                                         </div>
                                     </div>
                                 </Link>
@@ -417,6 +455,13 @@ const Page = () => {
                                 <div className="flex items-center gap-x-4 pt-3 text-[#787A80]">
                                     <LanguageIcon style={{ width: "20px", height: "20px" }} />
                                     <h1>Worldwide Shipping</h1>
+                                </div>
+                            </div>
+                            <div onClick={() => handleLikeProduct(currentProduct?.id)} className={`${isLike ? 'bg-orange-600 border border-orange-600 hover:border-2 hover:font-bold' : 'border border-orange-600 hover:border-2 hover:font-bold'} font-medium flex gap-x-2 py-2 justify-center mt-2 cursor-pointer rounded-md`}>
+                                <FavoriteBorderOutlinedIcon className={`${isLike ? 'text-white' : 'text-orange-600'}`} />
+                                <div className={`${isLike ? 'text-white' : 'text-orange-600'}`}>
+                                    {" "}
+                                    {isLike ? 'View in' : 'Add to'} wishlist
                                 </div>
                             </div>
                         </div>
@@ -495,7 +540,7 @@ const Page = () => {
                         </div>
                         <div className="w-1/4">
                             <div className="rounded-md border-[#E0E0E0]">
-                                <h1 className="font-black text-white pl-3 py-2 rounded-md text-[18px] mb-4 w-full bg-[rgb(var(--quaternary-rgb))]">You may like</h1>
+                                <h1 className="font-black text-white pl-3 py-2 rounded-md text-[18px] mb-4 w-full bg-[rgb(var(--secondary-rgb))]">You may like</h1>
                                 {products?.slice(0, 4)?.map((item: any, index: any) => {
                                     return (
                                         <Link
@@ -532,9 +577,9 @@ const Page = () => {
                     </div>
                     <div className="w-full mt-8 mb-20">
                         <div className="">
-                            <h1 className="font-black text-2xl mb-4 text-gray-700">
+                            <div className="font-black text-2xl mb-4 text-gray-700">
                                 Related Products
-                            </h1>
+                            </div>
                             <div className="grid grid-cols-5 gap-x-4">
                                 {products.slice(0, 5)?.map((item: any, index: any) => {
                                     return <CardProduct key={index} item={item} index={index} limit={100} />

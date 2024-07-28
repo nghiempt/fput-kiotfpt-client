@@ -4,30 +4,27 @@ import CardProduct from '../components/Product';
 import { ShopService } from '../service/shop';
 import { CartService } from '../service/cart';
 import Cookie from "js-cookie";
+import Loading from '../components/Loading';
+import { toast } from 'react-semantic-toasts';
 
 const Page = () => {
 
     const [products, setProducts] = useState([] as any);
     const [cart, setCart] = useState([] as any);
     const [seletecItems, setSeletecItems] = useState([] as any);
+    const [totalPrice, setTotalPrice] = useState(0);
 
     const handleSelect = (e: any, product: any, section: any) => {
         e.preventDefault();
+        setTotalPrice(totalPrice + product?.total);
         if (checkSelected(product)) {
+            setTotalPrice(totalPrice - product?.total);
             const index = seletecItems.findIndex((item: any) => item?.item?.id === product?.id);
             seletecItems.splice(index, 1);
             setSeletecItems([...seletecItems]);
             return;
         }
         setSeletecItems([...seletecItems, { section_id: section?.section_id, shop_id: section?.shop?.id, item: product }]);
-    }
-
-    const renderTotal = () => {
-        let total = 0;
-        seletecItems.forEach((item: any) => {
-            total += item?.item?.total;
-        });
-        return total;
     }
 
     const checkSelected = (cart: any) => {
@@ -40,7 +37,8 @@ const Page = () => {
         return check;
     }
 
-    const remove = async (item: any) => {
+    const remove = async (e: any, item: any) => {
+        e.stopPropagation();
         const index = seletecItems.findIndex((i: any) => i?.item?.id === item?.id);
         if (index !== -1) {
             seletecItems.splice(index, 1);
@@ -64,6 +62,15 @@ const Page = () => {
     }
 
     const submit = () => {
+        if (seletecItems.length === 0) {
+            toast({
+                type: 'error',
+                title: 'Error',
+                description: 'Please select product to checkout',
+                time: 1000
+            })
+            return;
+        }
         Cookie.set("cart", JSON.stringify(seletecItems));
         window.location.href = "/checkout";
     }
@@ -109,68 +116,66 @@ const Page = () => {
                             <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
                                 <div className="space-y-6">
                                     {
-                                        cart?.map((section: any, index: any) => {
-                                            return (
-                                                <div key={index} className='w-full mb-10'>
-                                                    <div className='flex justify-start items-center gap-4 mb-2'>
-                                                        <div className='border p-2 rounded-md'>
-                                                            <img src={section?.shop?.thumbnail} alt="" className='w-10 h-10' />
+                                        cart?.length === 0
+                                            ?
+                                            <Loading />
+                                            :
+                                            cart?.map((section: any, index: any) => {
+                                                return (
+                                                    <div key={index} className='w-full mb-10'>
+                                                        <div className='flex justify-start items-center gap-4 mb-2'>
+                                                            <div className='border p-2 rounded-md'>
+                                                                <img src={section?.shop?.thumbnail} alt="" className='w-10 h-10' />
+                                                            </div>
+                                                            <div className='text-[18px] font-medium'>{section?.shop?.name}</div>
                                                         </div>
-                                                        <div className='text-[18px] font-medium'>{section?.shop?.name}</div>
-                                                    </div>
-                                                    <div className='w-full flex flex-col justify-center items-center gap-4'>
-                                                        {
-                                                            section?.items?.map((item: any, ind: any) => {
-                                                                return (
-                                                                    <div key={ind} onClick={(e) => handleSelect(e, item, section)} className={`${checkSelected(item) ? 'border-gray-700' : 'border-gray-200'} w-full cursor-pointer rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6`}>
-                                                                        <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                                                                            <img className="h-20 w-20 dark:hidden" src={item?.product?.thumbnail[0]?.link} alt="imac image" />
-                                                                            <label className="sr-only">Choose quantity:</label>
-                                                                            <div className="flex items-center justify-between md:order-3 md:justify-end">
-                                                                                <div className="flex items-center">
-                                                                                    <button onClick={(e) => updateAmount(e, item, item?.quantity - 1)} type="button" id="decrement-button" data-input-counter-decrement="counter-input" className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
-                                                                                        <svg className="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
-                                                                                        </svg>
-                                                                                    </button>
-                                                                                    <input type="text" id="counter-input" data-input-counter className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white" placeholder="" value={item?.quantity} required />
-                                                                                    <button onClick={(e) => updateAmount(e, item, item?.quantity + 1)} type="button" id="increment-button" data-input-counter-increment="counter-input" className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
-                                                                                        <svg className="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                                                                                        </svg>
-                                                                                    </button>
+                                                        <div className='w-full flex flex-col justify-center items-center gap-4'>
+                                                            {
+                                                                section?.items?.map((item: any, ind: any) => {
+                                                                    return (
+                                                                        <div key={ind} onClick={(e) => handleSelect(e, item, section)} className={`${checkSelected(item) ? 'border-gray-700 border-2' : 'border-gray-200'} w-full cursor-pointer rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6`}>
+                                                                            <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+                                                                                <img className="h-20 w-20 dark:hidden" src={item?.product?.thumbnail[0]?.link} alt="imac image" />
+                                                                                <label className="sr-only">Choose quantity:</label>
+                                                                                <div className="flex items-center justify-between md:order-3 md:justify-end">
+                                                                                    <div className="flex items-center">
+                                                                                        <button disabled={item?.quantity === 1 ? true : false} onClick={(e) => updateAmount(e, item, item?.quantity - 1)} type="button" id="decrement-button" data-input-counter-decrement="counter-input" className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                                                                                            <svg className="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+                                                                                            </svg>
+                                                                                        </button>
+                                                                                        <input type="text" id="counter-input" data-input-counter className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white" placeholder="" value={item?.quantity} required />
+                                                                                        <button disabled={item?.quantity === 10 ? true : false} onClick={(e) => updateAmount(e, item, item?.quantity + 1)} type="button" id="increment-button" data-input-counter-increment="counter-input" className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                                                                                            <svg className="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                                                                                            </svg>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    <div className="text-end md:order-4 md:w-32">
+                                                                                        <p className="text-base font-bold text-gray-900 dark:text-white">${item?.total}</p>
+                                                                                    </div>
                                                                                 </div>
-                                                                                <div className="text-end md:order-4 md:w-32">
-                                                                                    <p className="text-base font-bold text-gray-900 dark:text-white">${item?.total}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="w-full min-w-0 flex-1 space-y-2 md:order-2 md:max-w-md">
-                                                                                <a href={`/product/${item?.id}`} className="text-base font-medium text-gray-900 hover:underline dark:text-white">{item?.product?.name}</a>
-                                                                                <div>Variant: <strong>{item?.variant?.color?.value} | {item?.variant?.size?.value}</strong></div>
-                                                                                <div className="flex items-center gap-4">
-                                                                                    <button type="button" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white">
-                                                                                        <svg className="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
-                                                                                        </svg>
-                                                                                        Add to Favorites
-                                                                                    </button>
-                                                                                    <button onClick={() => remove(item)} type="button" className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
-                                                                                        <svg className="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
-                                                                                        </svg>
-                                                                                        Remove
-                                                                                    </button>
+                                                                                <div className="w-full min-w-0 flex-1 space-y-2 md:order-2 md:max-w-md">
+                                                                                    <div className="text-base font-medium text-gray-900 dark:text-white">{item?.product?.name}</div>
+                                                                                    <div>Variant: <strong>{item?.variant?.color?.value} | {item?.variant?.size?.value}</strong></div>
+                                                                                    <div className="flex items-center gap-4">
+                                                                                        <button onClick={(e) => remove(e, item)} type="button" className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
+                                                                                            <svg className="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                                                                            </svg>
+                                                                                            Remove
+                                                                                        </button>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                )
-                                                            })
-                                                        }
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )
-                                        })
+                                                )
+                                            })
                                     }
                                 </div>
                             </div>
@@ -181,7 +186,7 @@ const Page = () => {
                                         <div className="space-y-2">
                                             <dl className="flex items-center justify-between gap-4">
                                                 <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Original price</dt>
-                                                <dd className="text-base font-medium text-gray-900 dark:text-white">${renderTotal()}</dd>
+                                                <dd className="text-base font-medium text-gray-900 dark:text-white">${totalPrice}</dd>
                                             </dl>
                                             <dl className="flex items-center justify-between gap-4">
                                                 <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Savings</dt>
@@ -194,7 +199,7 @@ const Page = () => {
                                         </div>
                                         <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                                             <dt className="text-base font-bold text-gray-900 dark:text-white">Total</dt>
-                                            <dd className="text-base font-bold text-gray-900 dark:text-white">${renderTotal()}</dd>
+                                            <dd className="text-base font-bold text-gray-900 dark:text-white">${totalPrice}</dd>
                                         </dl>
                                     </div>
                                     <div className="flex items-center justify-center gap-2">
@@ -210,13 +215,18 @@ const Page = () => {
                         </div>
                         <div className="w-full my-10 mb-20">
                             <div className="">
-                                <h1 className="font-black text-2xl mb-4 text-gray-700">
+                                <div className="font-black text-2xl mb-4 text-gray-700">
                                     Related Products
-                                </h1>
+                                </div>
                                 <div className="grid grid-cols-5 gap-x-4">
-                                    {products?.slice(0, 5)?.map((item: any, index: any) => {
-                                        return <CardProduct key={index} item={item} index={index} limit={100} />
-                                    })}
+                                    {
+                                        products?.length === 0
+                                            ?
+                                            <Loading />
+                                            :
+                                            products?.slice(0, 5)?.map((item: any, index: any) => {
+                                                return <CardProduct key={index} item={item} index={index} limit={100} />
+                                            })}
                                 </div>
                             </div>
                         </div>

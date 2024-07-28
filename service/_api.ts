@@ -5,6 +5,8 @@ export const API = {
     // auth
     SIGN_IN: `${HOST}/auth/sign-in`,
     SIGN_UP: `${HOST}/auth/sign-up`,
+    SIGN_OUT: `${HOST}/auth/sign-out`,
+    FORGOT_PASSWORD: `${HOST}/auth/forgot-password`,
     // home
     GET_ALL_CATEGORIES: `${HOST}/category/get-all`,
     GET_ALL_BRANDS: `${HOST}/brand/get-all`,
@@ -13,12 +15,14 @@ export const API = {
     // shop
     GET_SHOP_BY_ID: `${HOST}/shop`,
     GET_PRODUCT_BY_SHOP: `${HOST}/product/get-by-type-and-shop`,
+    GET_PRODUCT_BY_SHOPCAT: `${HOST}/product/get-by-shop-and-cat`,
     // product
     GET_PRODUCT_BY_TYPE: `${HOST}/product/get-by-type`,
     GET_PRODUCT_BY_ID: `${HOST}/product/detail`,
     GET_PRODUCT_BY_BRAND: `${HOST}/product/get-by-brand`,
     GET_PRODUCT_BY_CATEGORY: `${HOST}/product/get-by-category`,
-    CREATE_FAVORITE: `${HOST}/favorite/create`,
+    CREATE_FAVORITE: `${HOST}/favourite/create`,
+    DELETE_FAVORITE: `${HOST}/favourite/delete`,
     // cart
     GET_CART: `${HOST}/cart`,
     ADD_TO_CART: `${HOST}/item/add-to-cart`,
@@ -40,7 +44,9 @@ export const API = {
     GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
     GET_ALL_FAVORITE_BY_ACCOUNT_ID: `${HOST}/favourite/get-all`,
     CREATE_ADDRESS: `${HOST}/address/create`,
+    SET_DEFAULT_ADDRESS: `${HOST}/address/set-default`,
     UPDATE_PASSWORD: `${HOST}/profile/update-password`,
     GET_ALL_PROVINCES: `${HOST}/address/province/get-all`,
     GET_DISTRICT_BY_PROVINCE: `${HOST}/address/district/get-all-by-province`,
+    CANCEL_ORDER: `${HOST}/order/update`,
 };

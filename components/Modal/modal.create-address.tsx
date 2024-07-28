@@ -96,7 +96,7 @@ const ModalCreateAddress: React.FC<ModalCreateAddressProps> = ({ open, setOpen, 
                     time: 1000
                 })
                 handleClear()
-                window.location.reload()
+                initialData()
             } else {
                 toast({
                     type: 'error',
@@ -105,6 +105,7 @@ const ModalCreateAddress: React.FC<ModalCreateAddressProps> = ({ open, setOpen, 
                     time: 1000
                 })
                 handleClear()
+                initialData()
             }
         }
     }
@@ -168,12 +169,12 @@ const ModalCreateAddress: React.FC<ModalCreateAddressProps> = ({ open, setOpen, 
                 </Form>
             </ModalContent>
             <ModalActions>
-                <Button color='grey' onClick={handleClear}>
+                <Button className='!bg-gray-300' onClick={handleClear}>
                     Cancel
                 </Button>
                 <Button
                     content="Submit"
-                    className='!bg-[rgb(78,178,173)]'
+                    className='!bg-[rgb(3,52,110)]'
                     labelPosition='right'
                     icon='checkmark'
                     onClick={submit}

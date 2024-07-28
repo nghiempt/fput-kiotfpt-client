@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react'
 import CardProduct from "../components/Product";
-import { CircularProgress, Divider, Pagination } from "@mui/material";
+import { CircularProgress, Divider } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -26,10 +26,34 @@ const Page = () => {
     const [categories, setCategories] = useState([] as any);
     const [brands, setBrands] = useState([] as any);
 
-    const [visibleCategories, setVisibleCategories] = useState(4);
-    const [visibleBrand, setVisibleBrand] = useState(4);
+    const [visibleProduct, setVisibleProduct] = useState(12);
+    const [visibleCategories, setVisibleCategories] = useState(6);
+    const [visibleBrand, setVisibleBrand] = useState(6);
     const [showAllCategories, setShowAllCategories] = useState(false);
     const [showAllBrand, setShowAllBrand] = useState(false);
+
+    const [currentRate, setCurrentRate] = useState(0);
+
+    const renderDataByRate = (data: any) => {
+        switch (currentRate) {
+            case 1:
+                return data?.filter((item: any) => item.rate === 1);
+            case 2:
+                return data?.filter((item: any) => item.rate === 2);
+            case 3:
+                return data?.filter((item: any) => item.rate === 3);
+            case 4:
+                return data?.filter((item: any) => item.rate === 4);
+            case 5:
+                return data?.filter((item: any) => item.rate === 5);
+            default:
+                return data;
+        }
+    }
+
+    const handleChangeRate = (rate: number) => {
+        setCurrentRate(rate);
+    };
 
     const handleShowAllCategories = () => {
         if (showAllCategories) {
@@ -92,7 +116,7 @@ const Page = () => {
 
     const getDataBySearch = async (key: string) => {
         setLoading(true);
-        const res = await ProductService.searchProduct(key, 1, 12);
+        const res = await ProductService.searchProduct(key, 1, 2000);
         if (res?.result) {
             setProducts(res?.data);
         } else {
@@ -103,7 +127,7 @@ const Page = () => {
 
     const getDataByType = async (type: string) => {
         setLoading(true);
-        const res = await ProductService.getProductByType(type, 1, 12);
+        const res = await ProductService.getProductByType(type, 1, 2000);
         if (res?.result) {
             setProducts(res?.data);
         } else {
@@ -114,7 +138,7 @@ const Page = () => {
 
     const getDataByBrand = async (brandID: string) => {
         setLoading(true);
-        const res = await ProductService.getProductByBrand(brandID, 1, 12);
+        const res = await ProductService.getProductByBrand(brandID, 1, 2000);
         if (res?.result) {
             setProducts(res?.data);
         } else {
@@ -125,7 +149,7 @@ const Page = () => {
 
     const getDataByCategory = async (categoryID: string) => {
         setLoading(true);
-        const res = await ProductService.getProductByCategory(categoryID, 1, 12);
+        const res = await ProductService.getProductByCategory(categoryID, 1, 2000);
         if (res?.result) {
             setProducts(res?.data);
         } else {
@@ -186,7 +210,7 @@ const Page = () => {
                 <meta name="keywords" content="" />
             </Head>
             <div className="w-full flex flex-col justify-center items-center">
-                <div className="w-full pb-10 flex flex-col justify-center items-center">
+                <div className="w-full pb-40 flex flex-col justify-center items-center">
                     <div className="w-2/3 flex justify-start items-center"></div>
                     <div className="w-2/3 flex gap-5">
                         <div className="w-1/4 flex flex-col gap-2 pb-5">
@@ -253,40 +277,11 @@ const Page = () => {
                             <Divider className="pt-2" />
                             <div className="flex flex-col gap-2">
                                 <div className="flex justify-between items-center">
-                                    <h1 className="font-semibold pb-2 pt-2 text-[16px]">
-                                        Price range
-                                    </h1>
-                                </div>
-                            </div>
-                            <div className="w-full flex gap-x-4">
-                                <div className="w-1/2">
-                                    <h1>Min</h1>
-                                    <input
-                                        className="w-full py-1 pl-2 outline-none border-gray-300 border rounded-md box-border"
-                                        type="text"
-                                        placeholder="0"
-                                    />
-                                </div>
-                                <div className="w-1/2">
-                                    <h1>Max</h1>
-                                    <input
-                                        className="w-full py-1 pl-2 outline-none border-gray-300 border rounded-md box-border"
-                                        type="text"
-                                        placeholder="999999"
-                                    />
-                                </div>
-                            </div>
-                            <button className="w-full py-2 bg-[rgb(var(--quaternary-rgb))] text-white font-semibold border rounded-[6px] hover:opacity-80">
-                                Apply
-                            </button>
-                            <Divider className="pt-2" />
-                            <div className="flex flex-col gap-2">
-                                <div className="flex justify-between items-center">
                                     <h1 className="font-semibold pb-2 pt-2 text-[16px]">Rating</h1>
                                 </div>
                                 <div className="flex flex-col gap-2 cursor-pointer">
-                                    {[5, 4, 3, 2, 1].map((rating) => (
-                                        <div className="flex gap-x-2 hover:bg-gray-100 rounded-xs" key={rating}>
+                                    {[5, 4, 3, 2, 1].map((rating: any, index: any) => (
+                                        <div onClick={() => handleChangeRate(rating)} className="flex gap-x-2 hover:bg-gray-100 rounded-xs" key={rating}>
                                             <input
                                                 type="radio"
                                                 className="cursor-pointer"
@@ -338,25 +333,35 @@ const Page = () => {
                                             ?
                                             <CircularProgress />
                                             :
-                                            products?.products?.map((item: any, index: any) => {
-                                                return (
-                                                    <CardProduct
-                                                        key={index}
-                                                        item={item}
-                                                        index={index}
-                                                        limit={20}
-                                                    />
-                                                );
+                                            renderDataByRate(products?.products)?.map((item: any, index: any) => {
+                                                if (index < visibleProduct) {
+                                                    return (
+                                                        <CardProduct
+                                                            key={index}
+                                                            item={item}
+                                                            index={index}
+                                                            limit={20}
+                                                        />
+                                                    );
+                                                }
                                             })
                                     }
                                 </div>
-                            </div>
-                            <div className="w-full flex justify-center gap-x-2 mt-8 mb-20">
-                                <Pagination
-                                    count={products?.totalPage}
-                                    variant="outlined"
-                                    shape="rounded"
-                                />
+                                {
+                                    visibleProduct < products?.products?.length &&
+                                    <div className='w-full flex justify-center items-center mt-20'>
+                                    <button
+                                        onClick={
+                                            () => {
+                                                setVisibleProduct(visibleProduct + 12)
+                                            }
+                                        }
+                                        className='hover:font-bold bg-[rgb(var(--secondary-rgb))] px-10 py-2 rounded-lg font-medium text-[12px] text-white'
+                                    >
+                                        View more
+                                    </button>
+                                </div>
+                                }
                             </div>
                         </div>
                     </div>

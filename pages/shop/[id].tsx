@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import StarIcon from "@mui/icons-material/Star";
 import CheckIcon from "@mui/icons-material/Check";
-import { CircularProgress, Pagination } from "@mui/material";
+import { Pagination } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -13,6 +13,7 @@ import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import { ShopService } from '../../service/shop';
 import CardProduct from '../../components/Product';
 import { useRouter } from 'next/router';
+import Loading from '../../components/Loading';
 
 interface CustomTabPanelProps {
     children: React.ReactNode;
@@ -55,7 +56,7 @@ const Page = () => {
 
     const [shop, setShop] = useState<any>(null);
     const [tab, setTab] = React.useState(0);
-    const [products, setProducts] = useState({} as any);
+    const [products, setProducts] = useState([] as any);
     const [loading, setLoading] = React.useState(true);
 
     const handleFilterType = (event: any, changeTab: any) => {
@@ -99,6 +100,10 @@ const Page = () => {
         }
     }
 
+    const handleFilterByCategory = (id: any) => {
+        loadProductByShopCat(id, 1);
+    }
+
     const handleFollowShop = () => {
 
     }
@@ -116,6 +121,17 @@ const Page = () => {
         const res = await ShopService.getProductByShop(id, type, page, 12);
         if (res?.result) {
             setProducts(res?.data);
+        }
+        setLoading(false);
+    }
+
+    const loadProductByShopCat = async (shopCatID: any, page: any) => {
+        setLoading(true);
+        const res = await ShopService.getProductByShopCat(shopCatID, page, 12);
+        if (res?.statusCode === '200') {
+            setProducts(res?.data);
+        } else {
+            setProducts([]);
         }
         setLoading(false);
     }
@@ -160,7 +176,7 @@ const Page = () => {
                                 <img src={shop?.thumbnail} alt="img" style={{ width: "86px", height: "86px" }} className="rounded-md" />
                                 <div className="flex flex-col gap-2">
                                     <h1 className="text-[16px] font-semibold">{shop?.name}</h1>
-                                    <div className="flex justify-center items-center bg-[rgb(var(--quaternary-rgb))] py-1 px-2 rounded-md">
+                                    <div className="flex justify-center items-center bg-[rgb(var(--secondary-rgb))] py-1 px-2 rounded-md">
                                         <CheckIcon style={{ color: "white" }} />
                                         <h1 className="text-white">
                                             Official
@@ -199,9 +215,9 @@ const Page = () => {
                             {
                                 checkFollow()
                                     ?
-                                    <button className="w-full flex justify-center items-center font-medium bg-[rgb(var(--quaternary-rgb))] rounded-md py-1.5 text-white cursor-text">Followed</button>
+                                    <button className="w-full flex justify-center items-center font-medium bg-[rgb(var(--secondary-rgb))] rounded-md py-1.5 text-white cursor-text">Followed</button>
                                     :
-                                    <button onClick={handleFollowShop} className="w-full flex justify-center items-center border-2 font-semibold border-[rgb(var(--quaternary-rgb))] hover:bg-blue-200 rounded-md py-1 text-[rgb(var(--quaternary-rgb))]">+ Follow</button>
+                                    <button onClick={handleFollowShop} className="w-full flex justify-center items-center border-2 font-semibold border-[rgb(var(--secondary-rgb))] hover:bg-blue-200 rounded-md py-1 text-[rgb(var(--secondary-rgb))]">+ Follow</button>
                             }
                         </div>
                     </div>
@@ -213,7 +229,7 @@ const Page = () => {
                                     {
                                         shop?.shopcategories?.map((item: any, index: any) => {
                                             return (
-                                                <div key={index} className="flex jusitfy-center items-center gap-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                                                <div onClick={() => handleFilterByCategory(item?.id)} key={index} className="flex jusitfy-center items-center gap-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
                                                     <img src={item?.category?.thumbnail} alt="img" width={30} />
                                                     <div>
                                                         {item?.category?.name}
@@ -255,7 +271,7 @@ const Page = () => {
                                                         loading
                                                             ?
                                                             <div className="flex w-full justify-center items-center h-[800px] mt-4">
-                                                                <CircularProgress />
+                                                                <Loading />
                                                             </div>
                                                             :
                                                             <div className="w-full grid grid-cols-4 gap-2 mt-4">
@@ -284,7 +300,7 @@ const Page = () => {
                                                         loading
                                                             ?
                                                             <div className="flex w-full justify-center items-center h-[800px] mt-4">
-                                                                <CircularProgress />
+                                                                <Loading />
                                                             </div>
                                                             :
                                                             <div className="w-full grid grid-cols-4 gap-2 mt-4">
@@ -313,7 +329,7 @@ const Page = () => {
                                                         loading
                                                             ?
                                                             <div className="flex w-full justify-center items-center h-[800px] mt-4">
-                                                                <CircularProgress />
+                                                                <Loading />
                                                             </div>
                                                             :
                                                             <div className="w-full grid grid-cols-4 gap-2 mt-4">
@@ -342,7 +358,7 @@ const Page = () => {
                                                         loading
                                                             ?
                                                             <div className="flex w-full justify-center items-center h-[800px] mt-4">
-                                                                <CircularProgress />
+                                                                <Loading />
                                                             </div>
                                                             :
                                                             <div className="w-full grid grid-cols-4 gap-2 mt-4">
@@ -371,7 +387,7 @@ const Page = () => {
                                                         loading
                                                             ?
                                                             <div className="flex w-full justify-center items-center h-[800px] mt-4">
-                                                                <CircularProgress />
+                                                                <Loading />
                                                             </div>
                                                             :
                                                             <div className="w-full grid grid-cols-4 gap-2 mt-4">
@@ -400,7 +416,7 @@ const Page = () => {
                                                         loading
                                                             ?
                                                             <div className="flex w-full justify-center items-center h-[800px] mt-4">
-                                                                <CircularProgress />
+                                                                <Loading />
                                                             </div>
                                                             :
                                                             <div className="w-full grid grid-cols-4 gap-2 mt-4">

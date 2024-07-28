@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
     ModalHeader,
     ModalContent,
     Modal,
     Divider,
 } from 'semantic-ui-react'
-import { CheckoutService } from '../../service/checkout'
 
 interface ModalChooseVoucherProps {
     open: boolean
@@ -16,27 +15,10 @@ interface ModalChooseVoucherProps {
 
 const ModalChooseVoucher: React.FC<ModalChooseVoucherProps> = ({ open, setOpen, listVoucher, setSelectedVoucher }) => {
 
-    const [listSection, setListSection] = React.useState<any>([])
-
     const handleChoose = (voucher: any) => {
         setSelectedVoucher(voucher)
         setOpen(false)
     }
-
-    const getVoucher = async () => {
-        let tmp: any = []
-        listVoucher?.map(async (voucher: any, index: any) => {
-            const res = await CheckoutService.getVoucherByShop(voucher.shop_id)
-            if (res?.result) {
-                tmp.push(res?.data)
-            }
-        })
-        setListSection(tmp)
-    }
-
-    useEffect(() => {
-        getVoucher()
-    }, [])
 
     return (
         <Modal
@@ -49,16 +31,16 @@ const ModalChooseVoucher: React.FC<ModalChooseVoucherProps> = ({ open, setOpen, 
             <ModalContent image className='!relative !flex !flex-col !justify-center !items-center !gap-8'>
                 <div className='w-full flex flex-col justify-start items-center gap-6'>
                     {
-                        listSection?.map((section: any, index: number) => {
+                        listVoucher?.map((section: any, index: number) => {
                             return (
                                 <div key={index} className="w-full flex flex-col justify-center items-start">
                                     <div className='w-full flex justify-start items-center gap-3 border-b border-gray-300 pb-2'>
-                                        <img src="https://cdn-icons-png.flaticon.com/128/273/273177.png" alt="voucher" className="w-8 h-8" />
-                                        <div className='text-[16px] font-medium'>Cellphones</div>
+                                        <img src={section?.shop?.thumbnail} alt="voucher" className="w-8 h-8" />
+                                        <div className='text-[16px] font-medium'>{section?.shop?.name}</div>
                                     </div>
                                     <div className='w-full flex flex-col justify-start items-center gap-2 mt-2'>
                                         {
-                                            section?.map((voucher: any, ind: number) => {
+                                            section?.vouchers?.map((voucher: any, ind: number) => {
                                                 return (
                                                     <div key={ind} onClick={() => handleChoose(voucher)} className='w-full cursor-pointer hover:border-gray-700 hover:border-2 flex justify-start items-center gap-3 border px-4 py-2 rounded-lg'>
                                                         <img src="https://cdn-icons-png.flaticon.com/128/2327/2327010.png" alt="voucher" className="w-8 h-8" />

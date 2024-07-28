@@ -1,20 +1,33 @@
 import React from "react";
 import StarIcon from "@mui/icons-material/Star";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { limitString } from "../utils/helper";
 import Link from "next/link";
+import { Icon } from "semantic-ui-react";
 import { ProductService } from "../service/product";
+import { toast } from "react-semantic-toasts";
 
-export default function CardProduct({ item, index, limit }: { item: any, index: any, limit: any }) {
+export default function CardProduct({ item, index, limit, wishlist = 0, init }: { item: any, index: any, limit: any, wishlist?: number, init?: any }) {
 
-  const handleLikeProduct = async (e: any, id: any) => {
+  const handleUnLikeProduct = async (e: any) => {
     e.preventDefault();
     e.stopPropagation();
-    const res = await ProductService.createFavourite(id);
+    const res = await ProductService.deleteFavourite(wishlist);
     if (res?.result) {
-      alert("Add to wishlist successfully");
+      toast({
+        type: 'success',
+        title: 'Success',
+        description: res?.message,
+        time: 1000
+      })
+      init();
     } else {
-      alert("Add to wishlist failed");
+      toast({
+        type: 'error',
+        title: 'Error',
+        description: res?.message,
+        time: 1000
+      })
+      init();
     }
   }
 
@@ -47,22 +60,35 @@ export default function CardProduct({ item, index, limit }: { item: any, index: 
         pathname: `/product/${item?.id}`,
       }}
       key={index}
-      className="border border-gray-200 rounded-md p-2 cursor-pointer hover:border-gray-500"
+      className="border border-gray-200 rounded-md p-2 cursor-pointer hover:border-gray-500 hover:text-black"
       style={{ position: 'relative' }}
     >
-      <button onClick={(e) => handleLikeProduct(e, item?.id)} className={`${false ? 'bg-[rgb(var(--primary-rgb))] hover:bg-gray-200' : 'bg-gray-200 hover:bg-[rgb(var(--primary-rgb))]'} absolute text-white top-2 right-2 p-2 rounded-lg`}>
-        <FavoriteBorderIcon />
-      </button>
+      {
+        item?.official && (
+          <button className={`bg-orange-600 absolute text-white top-2 right-2 px-2 py-1 rounded-lg font-medium flex`}>
+            <Icon name='sellcast' />
+            Official
+          </button>
+        )
+      }
+      {
+        wishlist !== 0 && (
+          <button onClick={handleUnLikeProduct} className={`hover:font-bold bg-red-600 absolute text-white top-2 right-2 px-2 py-1 rounded-lg font-medium flex`}>
+            <Icon name='trash alternate' />
+            Remove
+          </button>
+        )
+      }
       <img src={item?.thumbnail[0]?.link} alt="img" />
       <div className="p-4">
         <div className="flex gap-x-2 items-center">
           <div className="w-full">
             <div className="flex gap-x-2 items-center">
-              <h1 className="font-semibold text-[18px]">
+              <div className="font-semibold text-[18px]">
                 {item?.minPrice === item?.maxPrice
                   ? `$${item?.minPrice}`
                   : `$${item?.minPrice} - $${item?.maxPrice}`}
-              </h1>
+              </div>
               <span className="font-semibold text-red-600 text-[12px] bg-red-100 px-2 rounded-full">
                 - {item?.discount}%
               </span>
@@ -71,7 +97,7 @@ export default function CardProduct({ item, index, limit }: { item: any, index: 
               <div className="flex items-center">
                 {renderStar(item?.rate)}
               </div>
-              <h1 className="text-xs">{item?.sold} sold</h1>
+              <div className="text-xs">{item?.sold} sold</div>
             </div>
           </div>
         </div>

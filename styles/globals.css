@@ -6,10 +6,10 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
-  --primary-rgb: 252, 65, 0;
-  --secondary-rgb: 255, 197, 90;
-  --tertiary-rgb: 0, 33, 94;
-  --quaternary-rgb: 44, 78, 128;
+  --primary-rgb: 2, 21, 38;
+  --secondary-rgb: 3, 52, 110;
+  --tertiary-rgb: 110, 172, 218;
+  --quaternary-rgb: 226, 226, 182;
 }
 
 @media (prefers-color-scheme: dark) {

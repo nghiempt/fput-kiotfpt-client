@@ -109,6 +109,22 @@ const createFavourite = async (productID: number) => {
     }
 };
 
+const deleteFavourite = async (productID: number) => {
+    try {
+        const response = await fetch(API.DELETE_FAVORITE + `/${productID}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 export const ProductService = {
     searchProduct,
     getProductByType,
@@ -116,5 +132,6 @@ export const ProductService = {
     getProductByCategory,
     getProductByID,
     createFavourite,
+    deleteFavourite,
     addProductToCart
 }

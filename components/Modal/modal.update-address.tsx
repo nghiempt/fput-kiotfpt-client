@@ -12,30 +12,30 @@ import {
 import { toast } from 'react-semantic-toasts'
 import { ProfileService } from '../../service/profile'
 import { AddressService } from '../../service/address'
+import { useRouter } from 'next/router'
 
 interface ModalUpdateAddressProps {
     open: boolean
     setOpen: (open: boolean) => void
     initialData: any
     selectedAddress: any
+    setSelectedAddress: any
 }
 
-const ModalUpdateAddress: React.FC<ModalUpdateAddressProps> = ({ open, setOpen, initialData, selectedAddress }) => {
+const ModalUpdateAddress: React.FC<ModalUpdateAddressProps> = ({ open, setOpen, initialData, selectedAddress, setSelectedAddress }) => {
+
+    const router = useRouter()
 
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
-    const [addressDetail, setAddressDetail] = useState('')
     const [provinces, setProvinces] = useState([] as any)
     const [districts, setDistricts] = useState([] as any)
-
-    const [addressProvince, setAddressProvince] = useState({} as any)
-    const [addressDistrict, setAddressDistrict] = useState({} as any)
 
     const getAllProvince = async () => {
         let tmp: any = []
         const province = await AddressService.getAllProvinces()
         if (province?.result) {
-            province?.data.map((item: any) => {
+            province?.data.forEach((item: any) => {
                 tmp = [...tmp, { key: item?.id, value: item?.id, text: item?.value }]
             })
         }
@@ -46,33 +46,25 @@ const ModalUpdateAddress: React.FC<ModalUpdateAddressProps> = ({ open, setOpen, 
         let tmp: any = []
         const district = await AddressService.getAllDistrictsByProvinceID(provinceID)
         if (district?.result) {
-            district?.data.map((item: any) => {
+            district?.data.forEach((item: any) => {
                 tmp = [...tmp, { key: item?.id, value: item?.id, text: item?.value }]
             })
         }
         return tmp
     }
 
-    const handleChangeProvince = async (e: any) => {
-        let provinceID = provinces.find((item: any) => item?.text === e?.target?.innerText)?.key
-        setAddressProvince({ id: provinceID, value: e?.target?.innerText })
-        setAddressDistrict({ id: 0, value: '' })
-        const districts = await getAllDistrict(provinceID)
+    const handleChangeProvince = async (e: any, { value }: any) => {
+        setSelectedAddress({ ...selectedAddress, province: { province_id: value }, district: { district_id: '' } })
+        const districts = await getAllDistrict(value)
         setDistricts(districts)
     }
 
-    const handleChangeDistrict = async (e: any) => {
-        let districtID = districts.find((item: any) => item?.text === e?.target?.innerText)?.key
-        setAddressDistrict({ id: districtID, value: e?.target?.innerText })
+    const handleChangeDistrict = (e: any, { value }: any) => {
+        setSelectedAddress({ ...selectedAddress, district: { district_id: value } })
     }
 
     const validate = () => {
-        if (addressDetail === '') {
-            setMessage('addressDetail is required')
-            return false
-        } else {
-            return true
-        }
+        return true
     }
 
     const submit = async () => {
@@ -82,27 +74,27 @@ const ModalUpdateAddress: React.FC<ModalUpdateAddressProps> = ({ open, setOpen, 
             setLoading(true)
             const payload =
             {
-                account_profile_id: 92,
-                address_value: addressDetail,
-                default: false,
-                district_id: addressDistrict?.id,
-                province_id: addressProvince?.id
+                address_id: selectedAddress?.address_id,
+                address_value: selectedAddress?.address_value,
+                default: selectedAddress?.isdefault,
+                district_id: selectedAddress?.district?.district_id,
+                province_id: selectedAddress?.province?.province_id
             }
-            const res = await ProfileService.createAddress(payload)
+            const res = await ProfileService.updateAddress(payload)
             if (res?.result) {
                 toast({
                     type: 'success',
                     title: 'Success',
-                    description: 'Create address success',
+                    description: res?.message,
                     time: 1000
                 })
                 handleClear()
-                window.location.reload()
+                router.reload()
             } else {
                 toast({
                     type: 'error',
                     title: 'Error',
-                    description: 'Create address failed',
+                    description: res?.message,
                     time: 1000
                 })
                 handleClear()
@@ -114,7 +106,6 @@ const ModalUpdateAddress: React.FC<ModalUpdateAddressProps> = ({ open, setOpen, 
         setMessage('')
         setOpen(false)
         setLoading(false)
-        setAddressDetail('')
     }
 
     const checkMessage = () => {
@@ -127,11 +118,17 @@ const ModalUpdateAddress: React.FC<ModalUpdateAddressProps> = ({ open, setOpen, 
     const init = async () => {
         const provinces = await getAllProvince()
         setProvinces(provinces)
+        if (selectedAddress?.province?.province_id) {
+            const districts = await getAllDistrict(selectedAddress?.province?.province_id)
+            setDistricts(districts)
+        }
     }
 
     useEffect(() => {
-        init()
-    }, [])
+        if (open) {
+            init()
+        }
+    }, [open])
 
     return (
         <Modal
@@ -156,30 +153,42 @@ const ModalUpdateAddress: React.FC<ModalUpdateAddressProps> = ({ open, setOpen, 
                             id='address'
                             placeholder='Address Detail'
                             value={selectedAddress?.address_value}
-                            onChange={(e) => { setAddressDetail(e.target.value); setMessage('done') }}
+                            onChange={(e) => setSelectedAddress({ ...selectedAddress, address_value: e.target.value })}
                         />
                     </FormField>
                     <FormField>
                         <label>Province</label>
                         <div className='!w-full flex gap-2'>
-                            <Select className='!w-full' placeholder='Select your province' options={provinces} onChange={(e) => handleChangeProvince(e)} />
+                            <Select
+                                className='!w-full'
+                                value={selectedAddress?.province?.province_id}
+                                placeholder='Select your province'
+                                options={provinces}
+                                onChange={handleChangeProvince}
+                            />
                         </div>
                     </FormField>
                     <FormField>
                         <label>District</label>
                         <div className='!w-full flex gap-2'>
-                            <Select className='!w-full' placeholder='Select your district' options={districts} onChange={(e) => handleChangeDistrict(e)} />
+                            <Select
+                                className='!w-full'
+                                value={selectedAddress?.district?.district_id}
+                                placeholder='Select your district'
+                                options={districts}
+                                onChange={handleChangeDistrict}
+                            />
                         </div>
                     </FormField>
                 </Form>
             </ModalContent>
             <ModalActions>
-                <Button color='grey' onClick={handleClear}>
+                <Button className='!bg-gray-300' onClick={handleClear}>
                     Cancel
                 </Button>
                 <Button
                     content="Submit"
-                    className='!bg-[rgb(78,178,173)]'
+                    className='!bg-[rgb(3,52,110)]'
                     labelPosition='right'
                     icon='checkmark'
                     onClick={submit}

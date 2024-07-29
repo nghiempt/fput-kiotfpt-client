@@ -44,6 +44,8 @@ export const API = {
     GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
     GET_ALL_FAVORITE_BY_ACCOUNT_ID: `${HOST}/favourite/get-all`,
     CREATE_ADDRESS: `${HOST}/address/create`,
+    UPDATE_ADDRESS: `${HOST}/address/update`,
+    DELETE_ADDRESS: `${HOST}/address/delete`,
     SET_DEFAULT_ADDRESS: `${HOST}/address/set-default`,
     UPDATE_PASSWORD: `${HOST}/profile/update-password`,
     GET_ALL_PROVINCES: `${HOST}/address/province/get-all`,

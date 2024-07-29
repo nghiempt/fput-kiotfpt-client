@@ -49,21 +49,53 @@ const Page = () => {
         if (index !== -1) {
             seletecItems.splice(index, 1);
             setSeletecItems([...seletecItems]);
+            let total = totalPrice
+            total = total - item?.total;
+            setTotalPrice(total);
         }
         const res = await CartService.removeItemInCart(item?.id);
         if (res?.result) {
-            init();
+            try {
+                const [
+                    car,
+                ] = await Promise.all([
+                    CartService.getCart(),
+                ]);
+                if (car?.result) {
+                    setCart(car?.data);
+                }
+            } catch (error) {
+                return
+            }
         }
     }
 
     const updateAmount = async (e: any, item: any, amount: any) => {
         e.stopPropagation();
-        if (amount < 1) {
+        if (amount < 1 || amount > 10) {
             return;
+        }
+        const index = seletecItems.findIndex((i: any) => i?.item?.id === item?.id);
+        if (index !== -1) {
+            let total = totalPrice
+            total = total - item?.total;
+            total = total + item?.variant?.price * amount;
+            setTotalPrice(total);
         }
         const res = await CartService.updateAmountCart(item?.id, amount);
         if (res?.result) {
-            init();
+            try {
+                const [
+                    car,
+                ] = await Promise.all([
+                    CartService.getCart(),
+                ]);
+                if (car?.result) {
+                    setCart(car?.data);
+                }
+            } catch (error) {
+                return
+            }
         }
     }
 

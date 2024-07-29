@@ -180,8 +180,6 @@ const getAllFavourite = async () => {
 };
 
 const createAddress = async (payload: any) => {
-    console.log(payload);
-    
     try {
         const response = await fetch(API.CREATE_ADDRESS, {
             method: "POST",
@@ -192,8 +190,39 @@ const createAddress = async (payload: any) => {
             body: JSON.stringify(payload),
         });
         const data = await response.json();
-        console.log(data);
-        
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const updateAddress = async (payload: any) => {
+    try {
+        const response = await fetch(API.UPDATE_ADDRESS, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const deleteAddress = async (id: any) => {
+    try {
+        const response = await fetch(API.DELETE_ADDRESS + `/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${JSON.parse(Cookie.get("auth") || "{}")?.token}`,
+            },
+        });
+        const data = await response.json();
         return data
     } catch (err) {
         return false;
@@ -262,6 +291,8 @@ export const ProfileService = {
     getAllAddress,
     getAllFavourite,
     createAddress,
+    updateAddress,
+    deleteAddress,
     setDefaultAddress,
     updatePassword,
     cancelOrder

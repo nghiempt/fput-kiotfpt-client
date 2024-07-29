@@ -20,7 +20,7 @@ const Page = () => {
         setOpenModalCreate(true);
     }
 
-    const handleOpenModalUpdate = (item: any) => {
+    const handleOpenModalUpdate = async (item: any) => {
         setSelectedAddress(item);
         setOpenModalUpdate(true);
     }
@@ -46,11 +46,33 @@ const Page = () => {
         }
     }
 
+    const deleteAddress = async (id: any) => {
+        const res = await ProfileService.deleteAddress(id);
+        if (res?.result) {
+            toast({
+                type: 'success',
+                title: 'Success',
+                description: res?.message,
+                time: 1000
+            })
+            handleGetAddress();
+        } else {
+            toast({
+                type: 'error',
+                title: 'Error',
+                description: res?.message,
+                time: 1000
+            })
+            handleGetAddress();
+        }
+    }
+
     const handleGetAddress = async () => {
         const fetch = async () => {
             const prof = await ProfileService.getAllAddress();
             if (prof?.result) {
                 setAddresses(prof?.data);
+                setSelectedAddress(prof?.data[0]);
             } else {
                 return
             }
@@ -78,7 +100,13 @@ const Page = () => {
                         <div className="w-4/5">
                             <div className="w-full box-border flex flex-col gap-4 pb-48">
                                 <ModalCreateAddress open={openModalCreate} setOpen={setOpenModalCreate} initialData={handleGetAddress} />
-                                <ModalUpdateAddress open={openModalUpdate} setOpen={setOpenModalUpdate} initialData={{}} selectedAddress={selectedAddress} />
+                                <ModalUpdateAddress
+                                    open={openModalUpdate}
+                                    setOpen={setOpenModalUpdate}
+                                    initialData={{}}
+                                    selectedAddress={selectedAddress}
+                                    setSelectedAddress={setSelectedAddress}
+                                />
                                 <h1 className="font-semibold text-[20px] py-4">Address Management</h1>
                                 <div className='flex justify-center items-center mb-6'>
                                     <button
@@ -121,6 +149,9 @@ const Page = () => {
                                                         <div className="flex justify-center items-center gap-4">
                                                             <button onClick={() => handleOpenModalUpdate(item)} className="font-medium text-[rgb(var(--secondary-rgb))] hover:font-bold box-border border border-[rgb(var(--secondary-rgb))] py-1 px-8 rounded-md">
                                                                 Edit
+                                                            </button>
+                                                            <button onClick={() => deleteAddress(item?.address_id)} className="font-medium text-red-500 hover:font-bold box-border border border-red-500 py-1 px-8 rounded-md">
+                                                                Delete
                                                             </button>
                                                         </div>
                                                     </div>

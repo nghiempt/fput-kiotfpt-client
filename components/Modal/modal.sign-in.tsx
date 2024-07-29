@@ -12,6 +12,8 @@ import {
 } from 'semantic-ui-react'
 import { toast } from 'react-semantic-toasts'
 import { AuthService } from '../../service/auth'
+import { useRouter } from 'next/router'
+import Image from 'next/image';
 
 interface ModalSignInProps {
     open: boolean
@@ -20,6 +22,8 @@ interface ModalSignInProps {
 }
 
 const ModalSignIn: React.FC<ModalSignInProps> = ({ open, setOpen, initialData }) => {
+
+    const router = useRouter();
 
     const [message, setMessage] = React.useState('')
     const [loading, setLoading] = React.useState(false)
@@ -96,15 +100,10 @@ const ModalSignIn: React.FC<ModalSignInProps> = ({ open, setOpen, initialData })
                     time: 1000
                 })
                 handleClear()
-                window.location.reload()
+                router.reload()
             } else {
-                toast({
-                    type: 'error',
-                    title: 'Error',
-                    description: res?.message,
-                    time: 1000
-                })
-                handleClear()
+                setMessage('Sign in failed')
+                setLoading(false)
             }
         }
     }
@@ -117,6 +116,7 @@ const ModalSignIn: React.FC<ModalSignInProps> = ({ open, setOpen, initialData })
         setPassword('')
         setEmailForgot('')
         setIsShowForgot(false)
+        setIsShowPassword(false)
     }
 
     const checkMessage = () => {
@@ -133,7 +133,12 @@ const ModalSignIn: React.FC<ModalSignInProps> = ({ open, setOpen, initialData })
             onOpen={() => setOpen(true)}
             open={open}
         >
-            <ModalHeader>{isShowForgot ? 'Forgot Password' : 'Sign In'}</ModalHeader>
+            <ModalHeader>
+                <div className='flex justify-start items-center gap-2'>
+                    <Image src="/logo.png" width={50} height={50} alt="img" />
+                    {isShowForgot ? 'Forgot Password' : 'Sign in with your account'}
+                </div>
+            </ModalHeader>
             {
                 checkMessage() && (
                     <div className="mt-1 p-4 bg-red-100 text-red-600 dark:bg-red-500 dark:text-red-100">
@@ -164,7 +169,7 @@ const ModalSignIn: React.FC<ModalSignInProps> = ({ open, setOpen, initialData })
                                 <label>Password</label>
                                 <input type={isShowPassword ? 'text' : 'password'} placeholder='Password' value={password} onChange={(e) => { setPassword(e.target.value); setMessage('done') }} />
                             </FormField>
-                            <div className='w-full flex justify-end items-center mb-10'>
+                            <div className='w-full flex justify-end items-center mb-6'>
                                 <FormField>
                                     <Checkbox label='Show password' onChange={showPassword} />
                                 </FormField>

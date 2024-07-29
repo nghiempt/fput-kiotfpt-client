@@ -90,8 +90,7 @@ const Page = () => {
         setPrice(classtify?.price);
     };
 
-    const handleQuantityChange = (event: any) => {
-        const amount = event.target.value;
+    const handleQuantityChange = (amount: any) => {
         setQuantity(amount);
         setDataAddToCart((prevData) => ({
             ...prevData,
@@ -338,7 +337,7 @@ const Page = () => {
                                 <h1 className="text-gray-700 font-medium w-1/3 mt-2">
                                     Classify:
                                 </h1>
-                                <div className="grid grid-cols-3 gap-x-2 pt-2">
+                                <div className="w-2/3 grid grid-cols-2 gap-2 pt-2">
                                     {currentProduct?.variants?.map((item: any, index: any) => {
                                         const classifyClass =
                                             item === selectedClassify
@@ -351,7 +350,7 @@ const Page = () => {
                                                 onClick={() => handleSelectClassify(item)}
                                             >
                                                 <div className="text-[#606060] w-full text-[12px]">
-                                                    {item?.color?.value} - {item?.size?.value}
+                                                    {item?.color?.value} - {item?.size?.value} ({item?.quantity} items availiable)
                                                 </div>
                                             </div>
                                         );
@@ -362,18 +361,29 @@ const Page = () => {
                                 <h1 className="text-gray-700 font-medium w-1/3 pt-2">
                                     Quantity:
                                 </h1>
-                                <div className="flex gap-x-2 pt-2">
-                                    <input
-                                        type="number"
-                                        value={quantity}
-                                        onChange={handleQuantityChange}
-                                        className=" w-full border rounded-md px-2 py-1 outline-none"
-                                    />
+                                <div className="flex flex-col gap-2 pt-2">
+                                    <div className="flex items-center">
+                                        <button disabled={quantity === 0 ? true : false} onClick={(e) => handleQuantityChange(quantity - 1)} type="button" id="decrement-button" data-input-counter-decrement="counter-input" className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100">
+                                            <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+                                            </svg>
+                                        </button>
+                                        <input type="text" id="counter-input" data-input-counter className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0" placeholder="" value={quantity} required />
+                                        <button disabled={quantity === 10 ? true : false} onClick={(e) => handleQuantityChange(quantity + 1)} type="button" id="increment-button" data-input-counter-increment="counter-input" className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100">
+                                            <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div className=''>
+                                        (min: 1 items - max: 10 items)
+                                    </div>
                                 </div>
                             </div>
+
                             <div className="flex w-full pt-4 text-xl">
                                 <h1 className="text-gray-700 font-medium w-1/3 pt-2">Total:</h1>
-                                <h1 className=" font-semibold border rounded-md px-2 py-1">
+                                <h1 className=" font-semibold pr-2 py-1">
                                     ${price * quantity}
                                 </h1>
                             </div>

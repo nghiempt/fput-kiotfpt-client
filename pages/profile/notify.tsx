@@ -11,6 +11,10 @@ const Page = () => {
 
     const [notifies, setNotifies] = useState([] as any);
 
+    function reverseArray<T>(data: T[]): T[] {
+        return data.slice().reverse();
+    }
+
     const handleGetNotify = async () => {
         const fetch = async () => {
             const prof = await ProfileService.getAllNotifications();
@@ -73,7 +77,7 @@ const Page = () => {
                                                     <Loading />
                                                 </div>
                                                 :
-                                                notifies?.slice(0, 8)?.map((item: any, index: any) => {
+                                                reverseArray(notifies)?.map((item: any, index: any) => {
                                                     return (
                                                         <div key={index} className="w-full p-2 border rounded-md bg-gray-50">
                                                             <div className="flex justify-between items-center">

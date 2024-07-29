@@ -19,7 +19,6 @@ const Page = () => {
 
     const handleSendReview = async (productID: any, e: any) => {
         const payload = {
-            account_id: 105,
             product_id: productID,
             rate: rate,
             content: review,
@@ -39,8 +38,8 @@ const Page = () => {
                     need,
                     reviewed,
                 ] = await Promise.all([
-                    ProfileService.getProductNeedReview(105),
-                    ProfileService.getProductReviewed(105),
+                    ProfileService.getProductNeedReview(),
+                    ProfileService.getProductReviewed(),
                 ]);
                 if (need?.result) {
                     setProductsNeedReview(need?.data);
@@ -97,12 +96,12 @@ const Page = () => {
                                                                         placeholder='Write your review here...'
                                                                         value={review}
                                                                         onChange={(e) => setReview(e.target.value)}
-                                                                        className="w-5/6 px-4 py-2 box-border rounded-l-md border border-gray-300 focus:outline-none focus:border-[rgb(var(--quaternary-rgb))]"
+                                                                        className="w-5/6 px-4 py-2 box-border rounded-l-md border border-gray-300 focus:outline-none focus:border-[rgb(var(--secondary-rgb))]"
                                                                     />
                                                                     <div className="w-1/6 box-border flex justify-center items-center">
                                                                         <button
                                                                             onClick={(e) => handleSendReview(item?.id, e)}
-                                                                            className="w-full px-4 py-2 box-border text-center border font-semibold border-[rgb(var(--quaternary-rgb))] bg-[rgb(var(--quaternary-rgb))] text-white rounded-r-md hover:opacity-80 hover:text-white focus:outline-none">
+                                                                            className="w-full px-4 py-2 box-border text-center border font-semibold border-[rgb(var(--secondary-rgb))] bg-[rgb(var(--secondary-rgb))] text-white rounded-r-md hover:opacity-80 hover:text-white focus:outline-none">
                                                                             Send
                                                                         </button>
                                                                     </div>

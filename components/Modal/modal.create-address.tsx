@@ -7,7 +7,8 @@ import {
     FormField,
     Button,
     Form,
-    Select
+    Select,
+    Checkbox
 } from 'semantic-ui-react'
 import { toast } from 'react-semantic-toasts'
 import { ProfileService } from '../../service/profile'
@@ -81,9 +82,8 @@ const ModalCreateAddress: React.FC<ModalCreateAddressProps> = ({ open, setOpen, 
             setLoading(true)
             const payload =
             {
-                account_profile_id: 94,
                 address_value: addressDetail,
-                default: false,
+                default: true,
                 district_id: addressDistrict?.id,
                 province_id: addressProvince?.id
             }

@@ -6,7 +6,8 @@ import {
     Modal,
     FormField,
     Button,
-    Form
+    Form,
+    Checkbox
 } from 'semantic-ui-react'
 import { toast } from 'react-semantic-toasts'
 import { ProfileService } from '../../service/profile'
@@ -24,6 +25,12 @@ const ModalChangePassword: React.FC<ModalChangePasswordProps> = ({ open, setOpen
     const [oldPassword, setOldPassword] = React.useState('')
     const [newPassword, setNewPassword] = React.useState('')
     const [confirmNewPassword, setConfirmNewPassword] = React.useState('')
+
+    const [isShowPassword, setIsShowPassword] = React.useState(false)
+
+    const showPassword = (e: any, data: any) => {
+        setIsShowPassword(data.checked)
+    }
 
     const validate = () => {
         if (oldPassword === '') {
@@ -82,6 +89,7 @@ const ModalChangePassword: React.FC<ModalChangePasswordProps> = ({ open, setOpen
         setOldPassword('')
         setNewPassword('')
         setConfirmNewPassword('')
+        setIsShowPassword(false)
     }
 
     const checkMessage = () => {
@@ -110,16 +118,21 @@ const ModalChangePassword: React.FC<ModalChangePasswordProps> = ({ open, setOpen
                 <Form className='!w-full'>
                     <FormField>
                         <label>Old Password</label>
-                        <input placeholder='Old Password' value={oldPassword} onChange={(e) => { setOldPassword(e.target.value); setMessage('done') }} />
+                        <input type={isShowPassword ? 'text' : 'password'} placeholder='Old Password' value={oldPassword} onChange={(e) => { setOldPassword(e.target.value); setMessage('done') }} />
                     </FormField>
                     <FormField>
                         <label>New Password</label>
-                        <input placeholder='New Password' value={newPassword} onChange={(e) => { setNewPassword(e.target.value); setMessage('done') }} />
+                        <input type={isShowPassword ? 'text' : 'password'} placeholder='New Password' value={newPassword} onChange={(e) => { setNewPassword(e.target.value); setMessage('done') }} />
                     </FormField>
                     <FormField>
                         <label>Confirm New Password</label>
-                        <input placeholder='Confirm New Password' value={confirmNewPassword} onChange={(e) => { setConfirmNewPassword(e.target.value); setMessage('done') }} />
+                        <input type={isShowPassword ? 'text' : 'password'} placeholder='Confirm New Password' value={confirmNewPassword} onChange={(e) => { setConfirmNewPassword(e.target.value); setMessage('done') }} />
                     </FormField>
+                    <div className='w-full flex justify-end items-center'>
+                        <FormField>
+                            <Checkbox label='Show password' onChange={showPassword} />
+                        </FormField>
+                    </div>
                 </Form>
             </ModalContent>
             <ModalActions>

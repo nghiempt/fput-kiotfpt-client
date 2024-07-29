@@ -12,12 +12,23 @@ import { usePathname } from 'next/navigation'
 import { Icon, Input } from 'semantic-ui-react';
 import Cookie from 'js-cookie';
 import { useRouter } from 'next/router';
+import { AuthService } from '../service/auth';
+import { toast } from 'react-semantic-toasts';
 
 const Header = () => {
 
     const router = useRouter();
 
     const [searchHistory, setSearchHistory] = React.useState([] as any);
+
+    const [isSignIn, setIsSignIn] = useState(false);
+
+    useEffect(() => {
+        const cookie = Cookie.get('auth');
+        if (cookie) {
+            setIsSignIn(true);
+        }
+    }, []);
 
     useEffect(() => {
         const searchHistory = Cookie.get('searchHistory') || "[]";
@@ -42,7 +53,8 @@ const Header = () => {
             tmp = [...searchHistory, key];
             tmp = Array.from(new Set(tmp));
             Cookie.set('searchHistory', JSON.stringify(tmp));
-            window.location.href = `/product?q=${key}`;
+            setFocusSearch(false);
+            router.push(`/product?q=${key}`);
         }
     }
 
@@ -71,6 +83,18 @@ const Header = () => {
             setKey("");
         }
     }, [pathname])
+
+    const signOut = async () => {
+        const res = await AuthService.signOut();
+        toast({
+            type: 'success',
+            title: 'Success',
+            description: res?.message,
+            time: 1000
+        })
+        router.push('/');
+        router.reload();
+    }
 
     return (
         <div className='w-full flex flex-col items-center justify-center' onClick={(e) => hideFocusSearch(e)}>
@@ -143,7 +167,7 @@ const Header = () => {
                             </div>
                         )
                     }
-                    <div className="flex gap-x-6 text-gray-500">
+                    <div className="w-1/6 flex justify-end gap-x-6 text-gray-500">
                         <div className="flex flex-col justify-center items-center hover:font-bold hover:text-black">
                             <button
                                 className="flex flex-col justify-center items-center gap-1"
@@ -164,36 +188,6 @@ const Header = () => {
                                 className="flex flex-col justify-center items-center gap-1"
                                 onClick={(e) => {
                                     if (checkSignIn()) {
-                                        router.push(`/profile/notify`);
-                                    } else {
-                                        handleOpenModalSignIn();
-                                    }
-                                }}
-                            >
-                                <NotificationsIcon />
-                                <div>Notify</div>
-                            </button>
-                        </div>
-                        <div className="flex flex-col justify-center items-center hover:font-bold hover:text-black">
-                            <button
-                                className="flex flex-col justify-center items-center gap-1"
-                                onClick={(e) => {
-                                    if (checkSignIn()) {
-                                        router.push(`/profile/order`);
-                                    } else {
-                                        handleOpenModalSignIn();
-                                    }
-                                }}
-                            >
-                                <InventoryIcon />
-                                <div>Order</div>
-                            </button>
-                        </div>
-                        <div className="flex flex-col justify-center items-center hover:font-bold hover:text-black">
-                            <button
-                                className="flex flex-col justify-center items-center gap-1"
-                                onClick={(e) => {
-                                    if (checkSignIn()) {
                                         router.push(`/cart`);
                                     } else {
                                         handleOpenModalSignIn();
@@ -202,6 +196,21 @@ const Header = () => {
                             >
                                 <ShoppingCartIcon />
                                 <div>Cart</div>
+                            </button>
+                        </div>
+                        <div className="flex flex-col justify-center items-center hover:font-bold hover:text-black">
+                            <button
+                                className="flex flex-col justify-center items-center gap-1"
+                                onClick={(e) => {
+                                    if (checkSignIn()) {
+                                        signOut();
+                                    } else {
+                                        handleOpenModalSignIn();
+                                    }
+                                }}
+                            >
+                                <Icon name={`${isSignIn ? 'sign-out' : 'sign-in'}`} className='!ml-1' size='large' />
+                                <div>{isSignIn ? 'Sign Out' : 'Sign In'}</div>
                             </button>
                         </div>
                     </div>

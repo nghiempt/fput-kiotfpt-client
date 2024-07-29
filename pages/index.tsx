@@ -11,10 +11,13 @@ import { AuthService } from '../service/auth';
 import Cookie from "js-cookie";
 import { Icon } from 'semantic-ui-react';
 import Loading from '../components/Loading';
+import { useRouter } from 'next/router';
+import { toast } from 'react-semantic-toasts';
 
 const Page = () => {
 
     const [session, setSession] = useState();
+    const router = useRouter();
 
     const [openModalSignUp, setOpenModalSignUp] = useState(false)
     const [openModalSignIn, setOpenModalSignIn] = useState(false)
@@ -28,8 +31,14 @@ const Page = () => {
     }
 
     const signOut = async () => {
-        await AuthService.signOut();
-        window.location.reload();
+        const res = await AuthService.signOut();
+        toast({
+            type: 'success',
+            title: 'Success',
+            description: res?.message,
+            time: 1000
+        })
+        router.reload();
     }
 
     const renderStar = (rate: number) => {

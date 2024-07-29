@@ -98,9 +98,9 @@ const getAllTransactions = async () => {
     }
 };
 
-const getProductNeedReview = async (accountId: any) => {
+const getProductNeedReview = async () => {
     try {
-        const response = await fetch(API.GET_PRODUCT_NEED_REVIEW + `?accountId=${accountId}`, {
+        const response = await fetch(API.GET_PRODUCT_NEED_REVIEW, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -131,10 +131,9 @@ const createReview = async (payload: any) => {
     }
 };
 
-const getProductReviewed = async (accountId: any) => {
-    console.log(accountId);
+const getProductReviewed = async () => {
     try {
-        const response = await fetch(API.GET_PRODUCT_REVIEWED + `?accountID=${accountId}`, {
+        const response = await fetch(API.GET_PRODUCT_REVIEWED, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -142,7 +141,6 @@ const getProductReviewed = async (accountId: any) => {
             },
         });
         const data = await response.json();
-        console.log(data);
         return data
     } catch (err) {
         return false;

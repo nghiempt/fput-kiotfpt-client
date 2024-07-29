@@ -11,6 +11,7 @@ import {
 } from 'semantic-ui-react'
 import { toast } from 'react-semantic-toasts'
 import { AuthService } from '../../service/auth'
+import Image from 'next/image';
 
 interface ModalSignUpProps {
     open: boolean
@@ -89,6 +90,7 @@ const ModalSignUp: React.FC<ModalSignUpProps> = ({ open, setOpen, initialData })
         setUsername('')
         setPassword('')
         setConfirmPassword('')
+        setIsShowPassword(false)
     }
 
     const checkMessage = () => {
@@ -105,7 +107,12 @@ const ModalSignUp: React.FC<ModalSignUpProps> = ({ open, setOpen, initialData })
             onOpen={() => setOpen(true)}
             open={open}
         >
-            <ModalHeader>Sign Up</ModalHeader>
+            <ModalHeader>
+                <div className='flex justify-start items-center gap-2'>
+                    <Image src="/logo.png" width={50} height={50} alt="img" />
+                    Sign Up
+                </div>
+            </ModalHeader>
             {
                 checkMessage() && (
                     <div className="mt-1 p-4 bg-red-100 text-red-600 dark:bg-red-500 dark:text-red-100">

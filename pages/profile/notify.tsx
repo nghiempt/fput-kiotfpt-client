@@ -9,6 +9,7 @@ import Loading from '../../components/Loading';
 
 const Page = () => {
 
+    const [loading, setLoading] = useState(true);
     const [notifies, setNotifies] = useState([] as any);
 
     function reverseArray<T>(data: T[]): T[] {
@@ -20,7 +21,9 @@ const Page = () => {
             const prof = await ProfileService.getAllNotifications();
             if (prof?.result) {
                 setNotifies(prof?.data);
+                setLoading(false);
             } else {
+                setLoading(false);
                 return
             }
         }
@@ -71,35 +74,44 @@ const Page = () => {
                                 <div className="w-full flex gap-x-4  rounded-lg mt-2">
                                     <div className="w-full flex flex-col gap-2">
                                         {
-                                            notifies?.length === 0
+                                            loading
                                                 ?
-                                                <div className="w-full pt-20 flex justify-center items-center">
+                                                <div className='w-full h-[360px] flex justify-center items-center'>
                                                     <Loading />
                                                 </div>
                                                 :
-                                                reverseArray(notifies)?.map((item: any, index: any) => {
-                                                    return (
-                                                        <div key={index} className="w-full p-2 border rounded-md bg-gray-50">
-                                                            <div className="flex justify-between items-center">
-                                                                <div className="flex gap-x-4 items-center">
-                                                                    <div>
-                                                                        <div className="p-2">
-                                                                            <img src="https://cdn-icons-png.flaticon.com/128/4616/4616062.png" alt="avatar" className="w-14 h-14" />
+                                                notifies?.length === 0
+                                                    ?
+                                                    <div className='w-full h-[360px] flex justify-center items-center'>
+                                                        <img
+                                                            src='https://static.vecteezy.com/system/resources/previews/023/914/428/non_2x/no-document-or-data-found-ui-illustration-design-free-vector.jpg'
+                                                            alt='empty'
+                                                            className='w-1/3' />
+                                                    </div>
+                                                    :
+                                                    reverseArray(notifies)?.map((item: any, index: any) => {
+                                                        return (
+                                                            <div key={index} className="w-full p-2 border rounded-md bg-gray-50">
+                                                                <div className="flex justify-between items-center">
+                                                                    <div className="flex gap-x-4 items-center">
+                                                                        <div>
+                                                                            <div className="p-2">
+                                                                                <img src="https://cdn-icons-png.flaticon.com/128/4616/4616062.png" alt="avatar" className="w-14 h-14" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="flex flex-col gap-1">
+                                                                            <h1 className="font-semibold text-[16px]">{item?.title}</h1>
+                                                                            <h1 className="text-[12px]">{item?.description}</h1>
+                                                                            <h1 className="text-[12px]">{getDate(item?.time)} &nbsp; - &nbsp; {getTime(item?.time)}</h1>
                                                                         </div>
                                                                     </div>
-                                                                    <div className="flex flex-col gap-1">
-                                                                        <h1 className="font-semibold text-[16px]">{item?.title}</h1>
-                                                                        <h1 className="text-[12px]">{item?.description}</h1>
-                                                                        <h1 className="text-[12px]">{getDate(item?.time)} &nbsp; - &nbsp; {getTime(item?.time)}</h1>
+                                                                    <div onClick={() => handleDeleteNotify(item?.id)} className="border rounded-full mr-2 p-2 bg-orange-600 hover:bg-orange-700 cursor-pointer">
+                                                                        <DeleteIcon className="text-white" />
                                                                     </div>
                                                                 </div>
-                                                                <div onClick={() => handleDeleteNotify(item?.id)} className="border rounded-full mr-2 p-2 bg-orange-600 hover:bg-orange-700 cursor-pointer">
-                                                                    <DeleteIcon className="text-white" />
-                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    );
-                                                })}
+                                                        );
+                                                    })}
                                     </div>
                                 </div>
                             </div>

@@ -10,6 +10,7 @@ import Loading from '../../components/Loading';
 const Page = () => {
 
     const [orders, setOrders] = useState([] as any);
+    const [loading, setLoading] = useState(true);
     const [filterOrders, setFilterOrders] = useState([] as any);
     const [tab, setTab] = useState(0);
 
@@ -88,7 +89,9 @@ const Page = () => {
         if (prof?.result) {
             setOrders(prof?.data);
             handleChangeTab(prof?.data, 0);
+            setLoading(false);
         } else {
+            setLoading(false);
             return
         }
     }
@@ -132,48 +135,57 @@ const Page = () => {
                                 </div>
                                 <div className="w-full flex flex-col gap-10 mt-6">
                                     {
-                                        filterOrders?.length === 0
+                                        loading
                                             ?
-                                            <div className="w-full pt-20 flex justify-center items-center">
+                                            <div className='w-full h-[360px] flex justify-center items-center'>
                                                 <Loading />
                                             </div>
                                             :
-                                            filterOrders?.map((order: any, index: number) => {
-                                                return (
-                                                    <div key={index} className="flex flex-col">
-                                                        <div className="flex justify-between items-center mb-4">
-                                                            <div className="flex">
-                                                                <img src={order?.shop?.thumbnail} alt="Watch" className="w-24 h-24 object-cover mr-4 rounded-md" />
+                                            filterOrders?.length === 0
+                                                ?
+                                                <div className='w-full h-[360px] flex justify-center items-center'>
+                                                    <img
+                                                        src='https://static.vecteezy.com/system/resources/previews/023/914/428/non_2x/no-document-or-data-found-ui-illustration-design-free-vector.jpg'
+                                                        alt='empty'
+                                                        className='w-1/3' />
+                                                </div>
+                                                :
+                                                filterOrders?.map((order: any, index: number) => {
+                                                    return (
+                                                        <div key={index} className="flex flex-col">
+                                                            <div className="flex justify-between items-center mb-4">
+                                                                <div className="flex">
+                                                                    <img src={order?.shop?.thumbnail} alt="Watch" className="w-24 h-24 object-cover mr-4 rounded-md" />
+                                                                    <div className="flex flex-col gap-2">
+                                                                        <h2 className="text-xl font-semibold"><Icon name="shopping bag"></Icon>{order?.shop?.name} | #{order?.id}</h2>
+                                                                        <p>{getDate(order?.time_init)} | {getTime(order?.time_init)}</p>
+                                                                        <p className="text-lg">Total: <strong>${order?.total}</strong></p>
+                                                                    </div>
+                                                                </div>
                                                                 <div className="flex flex-col gap-2">
-                                                                    <h2 className="text-xl font-semibold"><Icon name="shopping bag"></Icon>{order?.shop?.name} | #{order?.id}</h2>
-                                                                    <p>{getDate(order?.time_init)} | {getTime(order?.time_init)}</p>
-                                                                    <p className="text-lg">Total: <strong>${order?.total}</strong></p>
+                                                                    {
+                                                                        order?.product?.map((pro: any, index: number) => {
+                                                                            return (
+                                                                                <div key={index} className="flex justify-center items-center gap-4">
+                                                                                    <h2 className="text-[14px] font-semibold">{pro?.name}</h2>
+                                                                                    <img src={pro?.thumbnail} alt="Watch" className="w-8 h-8 object-cover mr-4 rounded-md" />
+                                                                                </div>
+                                                                            )
+                                                                        })
+                                                                    }
                                                                 </div>
                                                             </div>
-                                                            <div className="flex flex-col gap-2">
-                                                                {
-                                                                    order?.product?.map((pro: any, index: number) => {
-                                                                        return (
-                                                                            <div key={index} className="flex justify-center items-center gap-4">
-                                                                                <h2 className="text-[14px] font-semibold">{pro?.name}</h2>
-                                                                                <img src={pro?.thumbnail} alt="Watch" className="w-8 h-8 object-cover mr-4 rounded-md" />
-                                                                            </div>
-                                                                        )
-                                                                    })
-                                                                }
-                                                            </div>
+                                                            {
+                                                                tab === 0 && (
+                                                                    <div className="w-full flex justify-end items-center mt-2">
+                                                                        <Button color='red' onClick={() => cancelOrder(order?.id)}>Cancel Order</Button>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                            <Divider />
                                                         </div>
-                                                        {
-                                                            tab === 0 && (
-                                                                <div className="w-full flex justify-end items-center mt-2">
-                                                                    <Button color='red' onClick={() => cancelOrder(order?.id)}>Cancel Order</Button>
-                                                                </div>
-                                                            )
-                                                        }
-                                                        <Divider />
-                                                    </div>
-                                                )
-                                            })
+                                                    )
+                                                })
                                     }
                                 </div>
                             </div>

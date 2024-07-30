@@ -307,6 +307,14 @@ const Header = () => {
                                 style={{ width: "20px", height: "20px" }}
                             />
                         </div>
+                        <div className="flex gap-x-2 items-center">
+                            Begin to Seller
+                            <img
+                                src="https://cdn-icons-png.flaticon.com/128/2534/2534183.png"
+                                alt="img"
+                                style={{ width: "20px", height: "20px" }}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

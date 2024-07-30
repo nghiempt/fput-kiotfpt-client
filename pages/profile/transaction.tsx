@@ -21,6 +21,8 @@ const TransactionPage: NextPage<any> = () => {
             setCurrentTransaction(prof?.data[0]);
             setCurrentItem(JSON.parse(prof?.data[0]?.desc || '{}'));
             setLoading(false);
+        } else {
+            setLoading(false);
         }
     }
 

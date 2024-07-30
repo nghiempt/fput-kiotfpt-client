@@ -11,6 +11,7 @@ import ModalUpdateAddress from '../../components/Modal/modal.update-address';
 
 const Page = () => {
 
+    const [loading, setLoading] = useState(true);
     const [addresses, setAddresses] = useState([] as any);
     const [selectedAddress, setSelectedAddress] = useState({} as any);
     const [openModalCreate, setOpenModalCreate] = useState(false)
@@ -73,7 +74,9 @@ const Page = () => {
             if (prof?.result) {
                 setAddresses(prof?.data);
                 setSelectedAddress(prof?.data[0]);
+                setLoading(false);
             } else {
+                setLoading(false);
                 return
             }
         }
@@ -118,10 +121,19 @@ const Page = () => {
                                     </button>
                                 </div>
                                 {
+                                    loading
+                                    ?
+                                    <div className='w-full h-[360px] flex justify-center items-center'>
+                                        <Loading />
+                                    </div>
+                                    :
                                     addresses?.length === 0
                                         ?
-                                        <div className="w-full pt-32 flex justify-center items-center">
-                                            <Loading />
+                                        <div className='w-full h-[360px] flex justify-center items-center'>
+                                            <img
+                                                src='https://static.vecteezy.com/system/resources/previews/023/914/428/non_2x/no-document-or-data-found-ui-illustration-design-free-vector.jpg'
+                                                alt='empty'
+                                                className='w-1/3' />
                                         </div>
                                         :
                                         addresses?.map((item: any, index: any) => {

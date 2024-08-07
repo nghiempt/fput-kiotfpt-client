@@ -68,7 +68,11 @@ const ModalChooseVoucher: React.FC<ModalChooseVoucherProps> = ({ open, setOpen, 
         setOpen(false)
     }
 
-    useEffect(() => { }, [listSelected])
+    useEffect(() => { 
+console.log(listVoucher);
+
+
+    }, [listSelected])
 
     return (
         <Modal
@@ -90,7 +94,7 @@ const ModalChooseVoucher: React.FC<ModalChooseVoucherProps> = ({ open, setOpen, 
                                     </div>
                                     <div className='w-full flex flex-col justify-start items-center gap-2 mt-2'>
                                         {
-                                            section?.vouchers?.map((voucher: any, ind: number) => {
+                                            section?.vouchers?.filter((voucher: any) => voucher?.status?.value === 'active')?.map((voucher: any, ind: number) => {
                                                 return (
                                                     <div key={ind} onClick={() => handleChoose(section, voucher)} className='w-full cursor-pointer hover:border-gray-700 hover:border-2 flex justify-between items-center border px-4 py-2 rounded-lg'>
                                                         <div className='flex justify-start items-center gap-3'>

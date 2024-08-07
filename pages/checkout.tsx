@@ -56,6 +56,7 @@ const Page = () => {
                     }
                 })
                 setVouchers(tmp)
+                
             }
             handleGetVoucher()
         }
@@ -174,6 +175,7 @@ const Page = () => {
     useEffect(() => {
         handleGetAddress();
     }, []);
+
 
     return (
         <>

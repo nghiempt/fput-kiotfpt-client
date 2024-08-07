@@ -208,7 +208,7 @@ const Page = () => {
                                     <h1 className="font-semibold pb-2 pt-2 text-[16px]">Categories</h1>
                                 </div>
                                 <div className="flex flex-col flex-col-4 gap-2 cursor-pointer">
-                                    {categories?.map((item: any, index: any) => {
+                                    {categories?.filter((item: any) => item?.status?.value === 'active').map((item: any, index: any) => {
                                         if (index < visibleCategories) {
                                             return (
                                                 <div
@@ -240,7 +240,7 @@ const Page = () => {
                                     <h1 className="font-semibold pb-2 pt-2 text-[16px]">Brands</h1>
                                 </div>
                                 <div className="flex flex-col flex-col-4 gap-2 cursor-pointer">
-                                    {brands?.map((item: any, index: any) => {
+                                    {brands?.filter((item: any) => item?.status?.value === 'active').map((item: any, index: any) => {
                                         if (index < visibleBrand) {
                                             return (
                                                 <div

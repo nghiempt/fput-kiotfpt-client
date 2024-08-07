@@ -6,6 +6,7 @@ import 'aos/dist/aos.css';
 import { useEffect } from 'react';
 import AOS from 'aos';
 import ThemeRegistry from '../theme/theme-registry';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 function MyApp({ Component, pageProps }: AppProps) {
     useEffect(() => {
@@ -15,6 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     }, []);
     return (
         <>
+            <GoogleAnalytics gaId="G-HG7FNR03GR" />
             <ThemeRegistry>
                 <Layout>
                     <Component {...pageProps} />

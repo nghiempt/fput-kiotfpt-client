@@ -44,6 +44,8 @@ const Page = () => {
                 ]);
                 if (need?.result) {
                     setProductsNeedReview(need?.data);
+                    console.log(need?.data);
+                    
                 }
                 if (reviewed?.result) {
                     setProductsReviewed(reviewed?.data);
@@ -158,6 +160,7 @@ const Page = () => {
                                                                 <Rating
                                                                     icon='star'
                                                                     defaultRating={item?.rate}
+                                                                    disabled={true}
                                                                     maxRating={5}
                                                                     className="mt-4 mb-6"
                                                                 />

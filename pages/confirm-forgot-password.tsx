@@ -11,15 +11,14 @@ const Page = () => {
     }
 
     const init = async () => {
-        // const res = await fetch(`https://api.kiotfpt.store/v1/auth/confirm-forgot-password?newPassword=${router?.query?.newPassword}&username=${router?.query?.email}`)
-        // console.log(res);
+        const res = await fetch(`https://api.kiotfpt.store/v1/auth/confirm-forgot-password?newPassword=${router?.query?.newPassword}&username=${router?.query?.email}`)
     }
 
     useEffect(() => {
-        // if (router?.query?.email && router?.query?.newPassword) {
-        //     init();
-        // }
-    }, []);
+        if (router?.query?.email && router?.query?.newPassword) {
+            init();
+        }
+    }, [router]);
 
     return (
         <>

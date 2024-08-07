@@ -11,15 +11,15 @@ const Page = () => {
     }
 
     const init = async () => {
-        // const res = await fetch(`https://api.kiotfpt.store/v1/auth/confirm-sign-up/${router?.query?.email}`)
-        // console.log(res);
+        const res = await fetch(`https://api.kiotfpt.store/v1/auth/confirm-sign-up/${router?.query?.email}`)
+        console.log(res);
     }
 
     useEffect(() => {
-        // if (router?.query?.email) {
-        //     init();
-        // }
-    }, []);
+        if (router?.query?.email) {
+            init();
+        }
+    }, [router]);
 
     return (
         <>

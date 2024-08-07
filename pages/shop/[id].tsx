@@ -248,7 +248,7 @@ const Page = () => {
                                         <h1 className="font-semibold text-[20px]">
                                             All Products: &nbsp;{" "}
                                         </h1>
-                                        <h1 className="text-[16px]">{renderResult(products?.totalPage)}+ results</h1>
+                                        <h1 className="text-[16px]">{products?.totalPage === 1 ? products?.products?.length : renderResult(products?.totalPage)}+ results</h1>
                                     </div>
                                     <div>
                                         <Box sx={{ width: "100%" }}>
@@ -270,19 +270,28 @@ const Page = () => {
                                                     {
                                                         loading
                                                             ?
-                                                            <div className="flex w-full justify-center items-center h-[800px] mt-4">
+                                                            <div className='w-full h-[360px] flex justify-center items-center'>
                                                                 <Loading />
                                                             </div>
                                                             :
-                                                            <div className="w-full grid grid-cols-4 gap-2 mt-4">
-                                                                {
-                                                                    products?.products?.map((item: any, index: any) => {
-                                                                        return (
-                                                                            <CardProduct key={index} item={item} index={index} limit={20} />
-                                                                        );
-                                                                    })
-                                                                }
-                                                            </div>
+                                                            products?.products?.length === 0
+                                                                ?
+                                                                <div className='w-full h-[360px] flex justify-center items-center'>
+                                                                    <img
+                                                                        src='https://static.vecteezy.com/system/resources/previews/023/914/428/non_2x/no-document-or-data-found-ui-illustration-design-free-vector.jpg'
+                                                                        alt='empty'
+                                                                        className='w-1/3' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-full grid grid-cols-4 gap-2 mt-4">
+                                                                    {
+                                                                        products?.products?.map((item: any, index: any) => {
+                                                                            return (
+                                                                                <CardProduct key={index} item={item} index={index} limit={20} />
+                                                                            );
+                                                                        })
+                                                                    }
+                                                                </div>
                                                     }
                                                     <div className="flex justify-center my-10 mb-20">
                                                         <Pagination

@@ -93,7 +93,6 @@ const Header = () => {
             time: 1000
         })
         router.push('/');
-        router.reload();
     }
 
     return (

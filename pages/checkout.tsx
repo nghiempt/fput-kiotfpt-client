@@ -44,19 +44,28 @@ const Page = () => {
     const [discount, setDiscount] = useState([] as any);
 
     useEffect(() => {
-        const cartCookie = Cookie.get('cart');
-        if (cartCookie) {
-            setCart(JSON.parse(cartCookie));
+        const cartData = localStorage.getItem('cart');
+        if (cartData) {
+            setCart(JSON.parse(cartData));
+            console.log(JSON.parse(cartData));
             const handleGetVoucher = async () => {
-                let tmp: any = []
-                await JSON.parse(cartCookie)?.forEach(async (section: any) => {
-                    const res = await CheckoutService.getVoucherByShop(section.shop_id)
+                let tmp: any = [];
+                const cartItems = JSON.parse(cartData) || [];
+                const promises = cartItems.map(async (section: any) => {
+                    const res = await CheckoutService.getVoucherByShop(section.shop_id);
                     if (res?.result) {
-                        tmp.push(res?.data)
+                        tmp.push(res.data);
                     }
-                })
-                setVouchers(tmp)
-                
+                });            
+                await Promise.all(promises);
+                const uniqueVouchers = tmp.reduce((acc: any, voucher: any) => {
+                    if (!acc.some((v: any) => v.shop.id === voucher.shop.id)) {
+                        acc.push(voucher);
+                    }
+                    return acc;
+                }, []);
+            
+                setVouchers(uniqueVouchers);
             }
             handleGetVoucher()
         }
@@ -350,7 +359,7 @@ const Page = () => {
                                         </dl>
                                         <dl className="flex items-center justify-between gap-4 py-3">
                                             <dt className="text-base font-normal text-gray-500">Voucher</dt>
-                                            <dd className="text-base font-medium text-red-500">{renderValueVoucher()}</dd>
+                                            <dd className="text-base font-medium text-red-500">{renderValueVoucher() ? renderValueVoucher() : 0}</dd>
                                         </dl>
                                         <dl className="flex items-center justify-between gap-4 py-3">
                                             <dt className="text-base font-normal text-gray-500">Tax</dt>

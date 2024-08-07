@@ -20,7 +20,7 @@ const Header = () => {
     const router = useRouter();
 
     const [searchHistory, setSearchHistory] = React.useState([] as any);
-
+    const [loading, setLoading] = React.useState(false)
     const [isSignIn, setIsSignIn] = useState(false);
 
     useEffect(() => {
@@ -85,6 +85,7 @@ const Header = () => {
     }, [pathname])
 
     const signOut = async () => {
+        setLoading(true)
         const res = await AuthService.signOut();
         toast({
             type: 'success',
@@ -92,7 +93,11 @@ const Header = () => {
             description: res?.message,
             time: 1000
         })
-        router.push('/');
+        if (pathname === "/") {
+            router.reload();
+        } else {
+            window.location.href = 'http://localhost:3000';
+        }
     }
 
     return (

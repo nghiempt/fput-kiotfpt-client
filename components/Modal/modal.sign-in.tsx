@@ -126,6 +126,13 @@ const ModalSignIn: React.FC<ModalSignInProps> = ({ open, setOpen, initialData })
         return false
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            submit()
+        }
+    }
+
     return (
         <Modal
             size='mini'
@@ -153,7 +160,7 @@ const ModalSignIn: React.FC<ModalSignInProps> = ({ open, setOpen, initialData })
                         <Form className='!w-full'>
                             <FormField>
                                 <label>Enter your email</label>
-                                <input type='text' placeholder='Email want to reset password' value={emailForgot} onChange={(e) => { setEmailForgot(e.target.value); setMessage('done') }} />
+                                <input type='text' placeholder='Email want to reset password' value={emailForgot} onChange={(e) => { setEmailForgot(e.target.value); setMessage('done') }} onKeyDown={handleKeyDown} />
                             </FormField>
                             <FormField className='!w-full text-start'>
                                 <button onClick={handleShowForgot} className='!text-[rgb(3,52,110)] hover:font-bold'><Icon name="arrow left" /> Back to sign in</button>
@@ -163,11 +170,11 @@ const ModalSignIn: React.FC<ModalSignInProps> = ({ open, setOpen, initialData })
                         <Form className='!w-full'>
                             <FormField>
                                 <label>Username</label>
-                                <input type='text' placeholder='Username' value={username} onChange={(e) => { setUsername(e.target.value); setMessage('done') }} />
+                                <input type='text' placeholder='Username' value={username} onChange={(e) => { setUsername(e.target.value); setMessage('done') }} onKeyDown={handleKeyDown} />
                             </FormField>
                             <FormField>
                                 <label>Password</label>
-                                <input type={isShowPassword ? 'text' : 'password'} placeholder='Password' value={password} onChange={(e) => { setPassword(e.target.value); setMessage('done') }} />
+                                <input type={isShowPassword ? 'text' : 'password'} placeholder='Password' value={password} onChange={(e) => { setPassword(e.target.value); setMessage('done') }} onKeyDown={handleKeyDown} />
                             </FormField>
                             <div className='w-full flex justify-end items-center mb-6'>
                                 <FormField>
